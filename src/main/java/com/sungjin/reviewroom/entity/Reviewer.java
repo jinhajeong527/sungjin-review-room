@@ -50,15 +50,18 @@ public class Reviewer {
     private String mbti;
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH,
-                          CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "review")
+                          CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "reviewer")
     private Set<Review> reviews = new HashSet<>();
 
     public void add(Review review) {
+        System.out.println("11111111111111:"+review);
         if(review != null) {
             if(reviews == null) {
+                System.out.println("???????????????");
                 reviews = new HashSet<>();
             }
             reviews.add(review);
+            System.out.println("리뷰가 추가는 되고 있는건지?");
             review.setReviewer(this);
         }
     }

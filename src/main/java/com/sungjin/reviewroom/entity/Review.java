@@ -50,6 +50,4 @@ public class Review {
     @JoinColumn(name="reviewer_id")
     private Reviewer reviewer;
 
-
-    
 }

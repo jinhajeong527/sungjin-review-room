@@ -348,3 +348,12 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+target/classes/com/sungjin/reviewroom/controller/ReviewController.class
+target/classes/com/sungjin/reviewroom/dao/ReviewRepository.class
+target/classes/com/sungjin/reviewroom/entity/AddReviewPayload.class
+target/classes/com/sungjin/reviewroom/entity/AddReviewPayload$Review.class
+target/classes/com/sungjin/reviewroom/service/ReviewServiceImpl.class
+target/classes/com/sungjin/reviewroom/service/ReviewService.class
+target/classes/com/sungjin/reviewroom/entity/Show.class
+target/classes/com/sungjin/reviewroom/entity/Reviewer.class
+target/classes/com/sungjin/reviewroom/entity/Review.class
