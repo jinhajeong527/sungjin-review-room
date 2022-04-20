@@ -1,5 +1,6 @@
 package com.sungjin.reviewroom.entity;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +27,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class Reviewer {
+public class Reviewer implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,16 +57,45 @@ public class Reviewer {
     private Set<Review> reviews = new HashSet<>();
 
     public void add(Review review) {
-        System.out.println("11111111111111:"+review);
         if(review != null) {
             if(reviews == null) {
-                System.out.println("???????????????");
                 reviews = new HashSet<>();
             }
             reviews.add(review);
-            System.out.println("리뷰가 추가는 되고 있는건지?");
             review.setReviewer(this);
         }
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return null;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
+
+
     
 }

@@ -6,6 +6,16 @@ spring:
  data:
   rest:
     base-path: /api
+ security:
+    user:
+      password: test123 #임시 로그인 비밀번호. 아이디는 user
+    filter:
+      order: 10 #For Custom Filter
+sungjin:
+  reviewroom:
+    app:
+     jwtSecret: sungjinReviewRoomSecretKey  
+     jwtExpirationMs: 86400000
 
 server:
     port: 8080

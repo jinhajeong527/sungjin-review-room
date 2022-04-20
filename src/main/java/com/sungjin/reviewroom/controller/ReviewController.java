@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sungjin.reviewroom.service.ReviewService;
 import com.sungjin.reviewroom.dto.AddReviewPayload;
-import com.sungjin.reviewroom.entity.Review;
 
 @RestController
 @RequestMapping("api/review")
