@@ -7,12 +7,16 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.CascadeType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.JoinColumn;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -55,6 +59,13 @@ public class Reviewer implements UserDetails {
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH,
                           CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "reviewer")
     private Set<Review> reviews = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.DETACH,
+                                                   CascadeType.MERGE, CascadeType.REFRESH})
+	@JoinTable(name = "reviewer_role", 
+			   joinColumns = @JoinColumn(name = "reviewer_id"), 
+			   inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<Role> roles = new HashSet<>();
 
     public void add(Review review) {
         if(review != null) {

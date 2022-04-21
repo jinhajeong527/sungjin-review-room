@@ -11,6 +11,7 @@ spring:
       password: test123 #임시 로그인 비밀번호. 아이디는 user
     filter:
       order: 10 #For Custom Filter
+# App Properties
 sungjin:
   reviewroom:
     app:
