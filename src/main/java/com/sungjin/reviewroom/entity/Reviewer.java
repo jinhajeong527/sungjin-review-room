@@ -66,6 +66,15 @@ public class Reviewer implements UserDetails {
 			   joinColumns = @JoinColumn(name = "reviewer_id"), 
 			   inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
+    
+    //회원가입 기능 구현 시 사용할 생성자
+    public Reviewer(String email, String password, String firstName, String lastName, String mbti) {
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.mbti = mbti;
+    }
 
     public void add(Review review) {
         if(review != null) {

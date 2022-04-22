@@ -10,8 +10,6 @@ import lombok.Setter;
 public class LoginPayload {
     @NotBlank
     private String email;
-
 	@NotBlank
 	private String password;
-
 }

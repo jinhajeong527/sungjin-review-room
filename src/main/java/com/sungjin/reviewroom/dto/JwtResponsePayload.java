@@ -15,7 +15,7 @@ public class JwtResponsePayload {
     private String username;
     private String email;
     private List<String> roles;
-    
+
     public JwtResponsePayload(String token, int id, String username, String email, List<String> roles) {
         this.token = token;
         this.id = id;

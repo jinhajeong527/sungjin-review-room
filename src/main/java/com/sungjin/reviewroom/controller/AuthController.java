@@ -1,6 +1,8 @@
 package com.sungjin.reviewroom.controller;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -9,6 +11,11 @@ import com.sungjin.reviewroom.dao.ReviewerRepository;
 import com.sungjin.reviewroom.dao.RoleRepository;
 import com.sungjin.reviewroom.dto.JwtResponsePayload;
 import com.sungjin.reviewroom.dto.LoginPayload;
+import com.sungjin.reviewroom.dto.MessageResponse;
+import com.sungjin.reviewroom.dto.SignupPayload;
+import com.sungjin.reviewroom.entity.Reviewer;
+import com.sungjin.reviewroom.entity.Role;
+import com.sungjin.reviewroom.model.EnumRole;
 import com.sungjin.reviewroom.security.JwtUtils;
 import com.sungjin.reviewroom.security.UserDetailsImpl;
 
@@ -59,5 +66,44 @@ public class AuthController {
 												 userDetails.getEmail(), 
 												 roles));
 	}
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupPayload signupPayload) {
+        if (reviewerRepository.existsByEmail(signupPayload.getEmail())) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Error: Email is already in use!"));
+		}
+        Reviewer reviewer = new Reviewer(signupPayload.getEmail(), 
+                                         encoder.encode(signupPayload.getPassword()), 
+                                         signupPayload.getFirstName(), 
+                                         signupPayload.getLastName(), 
+                                         signupPayload.getMbti()
+                                        );
+        Set<String> rolesStr = signupPayload.getRole();
+        Set<Role> roles = new HashSet<>();
+        if(rolesStr == null) {
+            Role userRole = roleRepository.findByName(EnumRole.ROLE_REVIEWER)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(userRole);
+        } else {
+            rolesStr.forEach(role -> {
+                switch(role) {
+                case "admin":
+                    Role adminRole = roleRepository.findByName(EnumRole.ROLE_ADMIN)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(adminRole);
+                    break;
+                default:
+                    Role userRole = roleRepository.findByName(EnumRole.ROLE_REVIEWER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(userRole);
+                }
+            });
+        }
+        reviewer.setRoles(roles);
+        reviewerRepository.save(reviewer);
+        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    } 
     
 }
