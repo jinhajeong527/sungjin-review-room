@@ -357,3 +357,9 @@ target/classes/com/sungjin/reviewroom/service/ReviewService.class
 target/classes/com/sungjin/reviewroom/entity/Show.class
 target/classes/com/sungjin/reviewroom/entity/Reviewer.class
 target/classes/com/sungjin/reviewroom/entity/Review.class
+target/classes/com/sungjin/reviewroom/dao/GenreRepository.class
+target/classes/com/sungjin/reviewroom/dao/ReviewerRepository.class
+target/classes/com/sungjin/reviewroom/dao/ShowRepository.class
+target/classes/com/sungjin/reviewroom/dto/AddReviewPayload.class
+target/classes/com/sungjin/reviewroom/entity/Genre.class
+target/classes/com/sungjin/reviewroom/service/ShowRepositoy.class

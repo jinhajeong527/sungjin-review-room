@@ -21,12 +21,14 @@ import com.sungjin.reviewroom.security.UserDetailsImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +49,17 @@ public class AuthController {
     PasswordEncoder encoder;
     @Autowired
     JwtUtils jwtUtils;
+
+    @GetMapping("/all")
+	public String allAccess() {
+		return "Public Content.";
+	}
+    //ROLE REVIEWER 있는 사람만 접근 가능한지 확인하기 위한 테스트 REST API
+    @GetMapping("/user")
+    @PreAuthorize("hasRole('REVIEWER')")
+	public String userAccess() {
+		return "User Content.";
+	}
 
     @PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginPayload loginPayload) {

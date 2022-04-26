@@ -18,28 +18,28 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
-    private JwtUtils jwtUtils;
-    private UserDetailsServiceImpl userDetailsService;
-    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
     @Autowired
-    public AuthTokenFilter(JwtUtils jwtUtils, UserDetailsServiceImpl userDetailsService) {
-        this.jwtUtils = jwtUtils;
-        this.userDetailsService = userDetailsService;
-    }
+    private JwtUtils jwtUtils;
 
-    public AuthTokenFilter() {
-    }
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
     
+    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
             //JWT를 Authorization header에서 얻어온다(Bearer prefix 지우기)
             String jwt = parseJwt(request);
+           
             //해당 request가 JWT를 갖고 있으면, validate하고, email 파싱한다.
             if(jwt != null && jwtUtils.validateJwtToken(jwt)) {
+               
                 String email = jwtUtils.getUserEmailFromJwtToken(jwt);
+             
                 //email 정보를 통해서 UserDetails 얻어와 Authentication 오브젝트 생성한다.
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
                 UsernamePasswordAuthenticationToken authentication = 
@@ -62,6 +62,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
         if(StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            System.out.println(headerAuth);
             return headerAuth.substring(7, headerAuth.length());
         }
         return null;

@@ -8,5 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReviewerRepository extends JpaRepository<Reviewer, Integer> {
     Optional<Reviewer> findByEmail(String email);
+    Reviewer getByEmail(String email);
     Boolean existsByEmail(String email);
 }

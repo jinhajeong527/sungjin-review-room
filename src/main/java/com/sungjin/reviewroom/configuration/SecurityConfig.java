@@ -1,7 +1,6 @@
 package com.sungjin.reviewroom.configuration;
 
 
-import com.sungjin.reviewroom.dao.ReviewerRepository;
 import com.sungjin.reviewroom.security.AuthEntryPointJwt;
 import com.sungjin.reviewroom.security.AuthTokenFilter;
 import com.sungjin.reviewroom.security.UserDetailsServiceImpl;
@@ -11,17 +10,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity //Spring이 해당 클래스 Global Web Security로 사용할 수 있도록 함.
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     //User를 username에 의해 로드하는 메서드(loadUserByUsername) 갖고 있고, UserDetails 리턴한다.

@@ -17,7 +17,6 @@ import com.sungjin.reviewroom.entity.Show;
 import com.sungjin.reviewroom.entity.Genre;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,10 +36,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public void addNewReview(AddReviewPayload addReviewPayload) {
-        //임시 user 정보 하드코딩: JWT 적용하면서 수정할 것
-        int reviewerId = 1;
-        Reviewer reviewer = reviewerRepository.getById(reviewerId);
+    public void addNewReview(AddReviewPayload addReviewPayload, String email) {
+        //email 정보통해 Reviewer 엔티티 얻어온다.
+        Reviewer reviewer = reviewerRepository.getByEmail(email);
 
         //AddReviewPayload에서 showId 받아온다.
         int showId = addReviewPayload.getShow().getId();
