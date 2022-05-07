@@ -1,18 +1,22 @@
 package com.sungjin.reviewroom.controller;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import com.sungjin.reviewroom.dao.GenreRepository;
 import com.sungjin.reviewroom.dao.ReviewerRepository;
 import com.sungjin.reviewroom.dao.RoleRepository;
 import com.sungjin.reviewroom.dto.JwtResponsePayload;
 import com.sungjin.reviewroom.dto.LoginPayload;
 import com.sungjin.reviewroom.dto.MessageResponse;
 import com.sungjin.reviewroom.dto.SignupPayload;
+import com.sungjin.reviewroom.entity.Genre;
 import com.sungjin.reviewroom.entity.Reviewer;
 import com.sungjin.reviewroom.entity.Role;
 import com.sungjin.reviewroom.model.EnumRole;
@@ -43,6 +47,8 @@ public class AuthController {
     AuthenticationManager authenticationManager; 
     @Autowired
     ReviewerRepository reviewerRepository;
+    @Autowired
+    GenreRepository genreRepository;
     @Autowired
     RoleRepository roleRepository; 
     @Autowired
@@ -82,17 +88,20 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupPayload signupPayload) {
+        //이미 존재하는 이메일인지 확인한다.
         if (reviewerRepository.existsByEmail(signupPayload.getEmail())) {
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse("Error: Email is already in use!"));
 		}
+
         Reviewer reviewer = new Reviewer(signupPayload.getEmail(), 
                                          encoder.encode(signupPayload.getPassword()), 
                                          signupPayload.getFirstName(), 
                                          signupPayload.getLastName(), 
-                                         signupPayload.getMbti()
+                                         signupPayload.getMbti()                  
                                         );
+        // signupPayload에서 얻어온 Role 정보를 통해 DB에서 Role 엔티티 얻어와 Reviewer에 추가해주기     
         Set<String> rolesStr = signupPayload.getRole();
         Set<Role> roles = new HashSet<>();
         if(rolesStr == null) {
@@ -114,8 +123,21 @@ public class AuthController {
                 }
             });
         }
-        reviewer.setRoles(roles);
+        // signupPayload에서 얻어온 Genre 정보를 통해 DB에서 Genre 엔티티 얻어와 Reviewer에 추가해주기
+        Set<Genre> genres = signupPayload.getGenres();
+        Iterator<Genre> genreIterator = genres.iterator();
+        Set<Genre> genresFromDb = new HashSet<>();
+
+        while(genreIterator.hasNext()) {
+            int genreId = genreIterator.next().getId();
+            Genre genre = genreRepository.getById(genreId);
+            genresFromDb.add(genre);
+        }
+
+        reviewer.setGenres(genres);//reviewer_genre 조인테이블에 데이터 추가될 것
+        reviewer.setRoles(roles);//reviewer_role 조인테이블에 데이터 추가될 것.
         reviewerRepository.save(reviewer);
+        
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     } 
     

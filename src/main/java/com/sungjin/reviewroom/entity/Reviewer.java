@@ -19,8 +19,6 @@ import javax.persistence.Table;
 import javax.persistence.JoinColumn;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,7 +29,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class Reviewer implements UserDetails {
+public class Reviewer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,6 +58,13 @@ public class Reviewer implements UserDetails {
                           CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "reviewer")
     private Set<Review> reviews = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, 
+                                                   CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinTable(name = "reviewer_genre",
+               joinColumns = @JoinColumn(name = "reviewer_id"),
+               inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    private Set<Genre> genres;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.DETACH,
                                                    CascadeType.MERGE, CascadeType.REFRESH})
 	@JoinTable(name = "reviewer_role", 
@@ -86,36 +91,4 @@ public class Reviewer implements UserDetails {
         }
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override
-    public String getUsername() {
-        return null;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return false;
-    }
-
-
-    
 }

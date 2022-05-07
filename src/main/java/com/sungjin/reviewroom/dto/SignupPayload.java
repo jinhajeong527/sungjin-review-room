@@ -3,6 +3,9 @@ package com.sungjin.reviewroom.dto;
 import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import com.sungjin.reviewroom.entity.Genre;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -26,4 +29,7 @@ public class SignupPayload {
     private String mbti;
 
     private Set<String> role;
+
+    @NotNull
+    private Set<Genre> genres;
 }
