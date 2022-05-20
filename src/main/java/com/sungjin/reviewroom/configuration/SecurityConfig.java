@@ -20,15 +20,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity //Spring이 해당 클래스 Global Web Security로 사용할 수 있도록 함.
+@EnableWebSecurity // Spring이 해당 클래스 Global Web Security로 사용할 수 있도록 함.
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    //User를 username에 의해 로드하는 메서드(loadUserByUsername) 갖고 있고, UserDetails 리턴한다.
+    // User를 username에 의해 로드하는 메서드(loadUserByUsername) 갖고 있고, UserDetails 리턴한다.
     @Autowired
 	UserDetailsServiceImpl userDetailsService;
 
-    //authentication 에러 잡아낸다.
+    // Authentication 에러 잡아낸다.
 	@Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
 
@@ -65,8 +65,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-            .antMatchers("/api/test/**").permitAll()
+            .authorizeRequests()
+            .antMatchers("/api/auth/**").permitAll()
             .anyRequest().authenticated();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }

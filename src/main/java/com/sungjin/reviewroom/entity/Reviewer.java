@@ -1,6 +1,5 @@
 package com.sungjin.reviewroom.entity;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -53,6 +52,9 @@ public class Reviewer {
 
     @Column(name = "mbti")
     private String mbti;
+
+    @Column(name = "verified")
+    private boolean verified;
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH,
                           CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "reviewer")

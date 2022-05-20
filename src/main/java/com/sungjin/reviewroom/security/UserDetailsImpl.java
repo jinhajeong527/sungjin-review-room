@@ -20,13 +20,15 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
+    private boolean verified;
     
-    public UserDetailsImpl(int id, String username, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(int id, String username, String email, String password, Collection<? extends GrantedAuthority> authorities, boolean verified) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
+        this.verified = verified;
     }
     public static UserDetailsImpl build(Reviewer reviewer) {
         List<GrantedAuthority> authorities = reviewer.getRoles().stream()
@@ -36,7 +38,8 @@ public class UserDetailsImpl implements UserDetails {
                                    reviewer.getFirstName() + " " + reviewer.getLastName(), //이렇게 사용가능한지 체크 필요하다.
                                    reviewer.getEmail(), 
                                    reviewer.getPassword(), 
-                                   authorities);
+                                   authorities,
+                                   reviewer.isVerified()); 
     }
 
     //id 및 email은 UserDetails의 디폴트 리턴 정보가 아니다. 즉 오버라이드 메서드가 아니다.
@@ -79,8 +82,9 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return verified;
     }
+    
     @Override
     public boolean equals(Object obj) {
         if(this == obj)

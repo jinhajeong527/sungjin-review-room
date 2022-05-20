@@ -1,12 +1,10 @@
 package com.sungjin.reviewroom.controller;
 
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Calendar;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.sungjin.reviewroom.dao.GenreRepository;
@@ -16,27 +14,30 @@ import com.sungjin.reviewroom.dto.JwtResponsePayload;
 import com.sungjin.reviewroom.dto.LoginPayload;
 import com.sungjin.reviewroom.dto.MessageResponse;
 import com.sungjin.reviewroom.dto.SignupPayload;
-import com.sungjin.reviewroom.entity.Genre;
 import com.sungjin.reviewroom.entity.Reviewer;
-import com.sungjin.reviewroom.entity.Role;
-import com.sungjin.reviewroom.model.EnumRole;
+import com.sungjin.reviewroom.entity.VerificationToken;
+import com.sungjin.reviewroom.event.OnSignupCompleteEvent;
+import com.sungjin.reviewroom.exception.ReviewerAlreadyExistException;
 import com.sungjin.reviewroom.security.JwtUtils;
 import com.sungjin.reviewroom.security.UserDetailsImpl;
+import com.sungjin.reviewroom.service.ReviewerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.WebRequest;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -44,22 +45,28 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
-    AuthenticationManager authenticationManager; 
+    AuthenticationManager authenticationManager;
+    @Autowired
+    ApplicationEventPublisher eventPublisher;
+    @Autowired
+    ReviewerService reviewerService;
+    // ReviewerRepository 후에 코드정리 하면서 서비스 단으로 옮길 것.
     @Autowired
     ReviewerRepository reviewerRepository;
+    //
     @Autowired
     GenreRepository genreRepository;
     @Autowired
     RoleRepository roleRepository; 
-    @Autowired
-    PasswordEncoder encoder;
+    
     @Autowired
     JwtUtils jwtUtils;
 
-    @GetMapping("/all")
+    @GetMapping("/all") //ROLE 없어도 접근 가능한지 확인하기 위한 테스트 REST API
 	public String allAccess() {
 		return "Public Content.";
 	}
+
     //ROLE REVIEWER 있는 사람만 접근 가능한지 확인하기 위한 테스트 REST API
     @GetMapping("/user")
     @PreAuthorize("hasRole('REVIEWER')")
@@ -87,58 +94,51 @@ public class AuthController {
 	}
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupPayload signupPayload) {
-        //이미 존재하는 이메일인지 확인한다.
-        if (reviewerRepository.existsByEmail(signupPayload.getEmail())) {
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("Error: Email is already in use!"));
-		}
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupPayload signupPayload, HttpServletRequest request) {
 
-        Reviewer reviewer = new Reviewer(signupPayload.getEmail(), 
-                                         encoder.encode(signupPayload.getPassword()), 
-                                         signupPayload.getFirstName(), 
-                                         signupPayload.getLastName(), 
-                                         signupPayload.getMbti()                  
-                                        );
-        // signupPayload에서 얻어온 Role 정보를 통해 DB에서 Role 엔티티 얻어와 Reviewer에 추가해주기     
-        Set<String> rolesStr = signupPayload.getRole();
-        Set<Role> roles = new HashSet<>();
-        if(rolesStr == null) {
-            Role userRole = roleRepository.findByName(EnumRole.ROLE_REVIEWER)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-        } else {
-            rolesStr.forEach(role -> {
-                switch(role) {
-                case "admin":
-                    Role adminRole = roleRepository.findByName(EnumRole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(adminRole);
-                    break;
-                default:
-                    Role userRole = roleRepository.findByName(EnumRole.ROLE_REVIEWER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(userRole);
-                }
-            });
+        try { //Reviewer 등록 시도
+            Reviewer reviewerWhoJustSignedUp = reviewerService.registerUser(signupPayload);
+            String appUrl = request.getContextPath();
+            eventPublisher.publishEvent(new OnSignupCompleteEvent(reviewerWhoJustSignedUp, request.getLocale(), appUrl));
+        } catch(ReviewerAlreadyExistException raeException) {  //존재하는 Reviewer일 경우
+             return ResponseEntity
+			 		.badRequest()
+			 		.body(new MessageResponse("Error: Email is already in use!"));
+        } catch(RuntimeException exception) {
+             return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Error has occured while sending verification email"));
         }
-        // signupPayload에서 얻어온 Genre 정보를 통해 DB에서 Genre 엔티티 얻어와 Reviewer에 추가해주기
-        Set<Genre> genres = signupPayload.getGenres();
-        Iterator<Genre> genreIterator = genres.iterator();
-        Set<Genre> genresFromDb = new HashSet<>();
-
-        while(genreIterator.hasNext()) {
-            int genreId = genreIterator.next().getId();
-            Genre genre = genreRepository.getById(genreId);
-            genresFromDb.add(genre);
-        }
-
-        reviewer.setGenres(genres);//reviewer_genre 조인테이블에 데이터 추가될 것
-        reviewer.setRoles(roles);//reviewer_role 조인테이블에 데이터 추가될 것.
-        reviewerRepository.save(reviewer);
         
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     } 
-    
+
+    @GetMapping("/confirm")
+    public ResponseEntity<?> confirmSignup(WebRequest request, @RequestParam("token") String token) {
+
+        // Locale locale = request.getLocale();
+        // 생성된 인증토큰 얻어오기
+        VerificationToken verificationToken = reviewerService.getVerificationToken(token);
+
+        if (verificationToken == null) {
+            return ResponseEntity
+                .badRequest()
+                .body(new MessageResponse("Error: Invalid Verification Code"));
+        }
+        // 해당 verificationToken 과 일대일 관계 갖는 Reviewer Entity 얻어온다.
+        // VerificationToken => Reviewer 단방향 관계.
+        Reviewer reviewer = verificationToken.getReviewer();
+
+        Calendar cal = Calendar.getInstance();
+        // 24시간 지났을 경우 인증 토큰 만료 로직
+        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            return ResponseEntity
+                .badRequest()
+                .body(new MessageResponse("Error: Verification Code Has Been Expired"));
+        } 
+        // 시간 만료 전 인증 링크 눌렀을 경우에 verified true로 set 해주고, 다시 저장한다.
+        reviewer.setVerified(true); 
+        reviewerService.saveSignedUpReviewer(reviewer);
+        return ResponseEntity.ok(new MessageResponse("Reviewer has been successfully verified!"));
+    }
 }
