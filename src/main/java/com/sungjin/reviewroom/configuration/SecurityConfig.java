@@ -54,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /*
-    스프링에 CORS 및 CSRF 설정 어떻게 할 것인지 말하는 역할
+      스프링에 CORS 및 CSRF 설정 어떻게 할 것인지 말하는 역할
     - 모든 유저가 authenticated 되기를 원하거나, 
     - 어떤 필터 사용되기를 원하거나(AuthTokenFilter),
     - 언제 작동하길 원하는지를 설정해줄 때나(UsernamePasswordAuthenticationFilter 전에 필터 작동), 

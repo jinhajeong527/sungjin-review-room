@@ -32,14 +32,14 @@ public class UserDetailsImpl implements UserDetails {
     }
     public static UserDetailsImpl build(Reviewer reviewer) {
         List<GrantedAuthority> authorities = reviewer.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-                .collect(Collectors.toList());
+                                            .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+                                            .collect(Collectors.toList());
         return new UserDetailsImpl(reviewer.getId(), 
                                    reviewer.getFirstName() + " " + reviewer.getLastName(), //이렇게 사용가능한지 체크 필요하다.
                                    reviewer.getEmail(), 
                                    reviewer.getPassword(), 
                                    authorities,
-                                   reviewer.isVerified()); 
+                                   reviewer.isVerified());
     }
 
     //id 및 email은 UserDetails의 디폴트 리턴 정보가 아니다. 즉 오버라이드 메서드가 아니다.

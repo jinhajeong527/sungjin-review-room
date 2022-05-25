@@ -3,6 +3,7 @@ package com.sungjin.reviewroom.service;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -98,13 +99,34 @@ public class ReviewerServiceImpl implements ReviewerService {
         final VerificationToken myToken = new VerificationToken(token, reviewer);
         verificationTokenRepository.save(myToken);
     }
+
     @Override
+    @Transactional
+    public VerificationToken generateVerificationTokenAgain(String existingVerificationToken) {
+        VerificationToken expiredVerificationToken = verificationTokenRepository.findByToken(existingVerificationToken);
+        expiredVerificationToken.updateToken(UUID.randomUUID().toString());
+        expiredVerificationToken = verificationTokenRepository.save(expiredVerificationToken);
+        return expiredVerificationToken;
+    }
+
+    @Override
+    @Transactional
     public VerificationToken getVerificationToken(final String VerificationToken) {
         return verificationTokenRepository.findByToken(VerificationToken);
     }
     @Override
+    @Transactional
     public void saveSignedUpReviewer(final Reviewer reviewer) {
         reviewerRepository.save(reviewer);
     }
+
+    @Override
+    public Reviewer getReviewer(String token) {
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
+        Reviewer reviewer = reviewerRepository.getById(verificationToken.getReviewer().getId());
+        return reviewer;
+    }
+
+    
     
 }

@@ -25,6 +25,8 @@ import com.sungjin.reviewroom.service.ReviewerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -58,6 +60,8 @@ public class AuthController {
     GenreRepository genreRepository;
     @Autowired
     RoleRepository roleRepository; 
+    @Autowired
+    JavaMailSender mailSender;
     
     @Autowired
     JwtUtils jwtUtils;
@@ -81,7 +85,8 @@ public class AuthController {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = jwtUtils.generateJwtToken(authentication);
        
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();		
+		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        	
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
@@ -140,5 +145,21 @@ public class AuthController {
         reviewer.setVerified(true); 
         reviewerService.saveSignedUpReviewer(reviewer);
         return ResponseEntity.ok(new MessageResponse("Reviewer has been successfully verified!"));
+    }
+
+    //인증 토큰 만료 유저 토큰 재생성 시도
+    @GetMapping("/resendToken")
+    public ResponseEntity<?> resendVerificationToken(HttpServletRequest request, @RequestParam("token") String existingToken) {
+        VerificationToken newToken = reviewerService.generateVerificationTokenAgain(existingToken);
+        Reviewer reviewer = reviewerService.getReviewer(newToken.getToken());
+       
+        String confirmationUrl
+          = "/api/auth/confirm?token=" + newToken.getToken();
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(reviewer.getEmail());
+        email.setSubject("resending");
+        email.setText("\r\n" + "http://localhost:8080" + confirmationUrl);
+        mailSender.send(email);
+        return ResponseEntity.ok("ok");
     }
 }
