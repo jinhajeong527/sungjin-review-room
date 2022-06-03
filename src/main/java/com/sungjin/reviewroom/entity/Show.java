@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,7 +34,8 @@ public class Show {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "show")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "show")
+    @JsonIgnore
     private Set<Review> reviews = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.DETACH, 
@@ -40,6 +43,7 @@ public class Show {
     @JoinTable(name = "show_genre", 
                joinColumns = @JoinColumn(name = "show_id"), 
                inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    @JsonIgnore
     private Set<Genre> genres;
 
     public void addReview(Review review) {

@@ -121,6 +121,7 @@ public class ReviewerServiceImpl implements ReviewerService {
     }
 
     @Override
+    @Transactional
     public Reviewer getReviewer(String token) {
         VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
         Reviewer reviewer = reviewerRepository.getById(verificationToken.getReviewer().getId());

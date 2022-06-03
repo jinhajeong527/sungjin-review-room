@@ -12,6 +12,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,6 +36,7 @@ public class Genre {
     @JoinTable(name = "show_genre", 
                joinColumns = @JoinColumn(name = "genre_id"), 
                inverseJoinColumns = @JoinColumn(name = "show_id"))
+    @JsonIgnore
     private Set<Show> shows;
 
 

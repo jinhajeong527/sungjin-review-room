@@ -17,7 +17,9 @@ public class OnSignupCompleteEvent extends ApplicationEvent {
     private Reviewer reviewer;
 
     public OnSignupCompleteEvent(Reviewer reviewer, Locale locale, String appUrl) {
-        super(reviewer);
+        
+        super(reviewer); //ApplicationEvent에 인자 하나만 넣는 생성자가 의미하는 것이 무엇인지 알기
+
         this.reviewer = reviewer;
         this.locale = locale;
         this.appUrl = appUrl;
