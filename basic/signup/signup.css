@@ -1,0 +1,115 @@
+:root {
+  /*font*/
+  --font-title: 24px;
+  --font-large: 18px;
+  --font-medium: 14px;
+  --font-small: 12px;
+  --font-micro: 10px;
+  --title-font: 'Gugi', cursive;
+
+  /*color*/
+  --color-white: #ffffff;
+  --color-beige: #fff3e0;
+  --color-translucent-beige: rgba(255, 243, 224, 0.3);
+  --color-brown: #ccc0ae;
+  --color-darkbrown: #868078;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Poor Story', cursive;
+}
+
+* button {
+  outline: none;
+  border: none;
+  background-color: var(--color-beige);
+}
+
+.signup__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.signup__content .signup__title {
+  font-size: var(--font-title);
+}
+
+.signup__content .signup__form {
+  margin: 20px 0;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+.signup__content .signup__form>div>label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.signup__content .signup__form input {
+  height: 30px;
+  width: 250px;
+  border: none;
+  border-bottom: 1px solid var(--color-brown);
+  padding-left: 10px;
+}
+
+.signup__content .signup__form input:focus {
+  outline: none;
+  border: 2px solid var(--color-darkbrown);
+  border-radius: 5px;
+}
+
+.signup__content .signup__form .name input {
+  height: 30px;
+  width: 100px;
+  border: none;
+  border-bottom: 1px solid var(--color-brown);
+  padding-left: 10px;
+}
+
+.signup__content .signup__form div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.signup__content .signup__form .genres span {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.signup__content .signup__form .genres .genre__list {
+  margin: 0;
+  margin-top: 5px;
+  list-style: none;
+  width: 70%;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.signup__content .signup__form .genres .genre__list input {
+  height: auto;
+  width: auto;
+}
+
+.signup__content .signup__btn {
+  font-size: var(--font-large);
+  cursor: pointer;
+  background-color: var(--color-brown);
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+.signup__content .signup__btn:hover {
+  transform: scale(1.2);
+}
+
+.signup__content .signup__btn i {
+  margin-right: 10px;
+}
