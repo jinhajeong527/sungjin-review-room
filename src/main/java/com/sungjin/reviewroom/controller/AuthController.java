@@ -100,8 +100,8 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupPayload signupPayload, HttpServletRequest request) {
-
         try { //Reviewer 등록 시도
+            System.out.println(signupPayload.getGenres());
             Reviewer reviewerWhoJustSignedUp = reviewerService.registerUser(signupPayload);
             String appUrl = request.getContextPath();
             eventPublisher.publishEvent(new OnSignupCompleteEvent(reviewerWhoJustSignedUp, request.getLocale(), appUrl));
