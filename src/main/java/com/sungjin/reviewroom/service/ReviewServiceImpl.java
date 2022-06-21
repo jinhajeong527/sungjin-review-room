@@ -21,19 +21,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
-    ReviewerRepository reviewerRepository;
-    ReviewRepository reviewRepository;
-    ShowRepository showRepository;
-    GenreRepository genreRepository;
-
     @Autowired
-    public ReviewServiceImpl(ReviewerRepository reviewerRepository, ReviewRepository reviewRepository, ShowRepository showRepository,GenreRepository genreRepository) {
-        this.reviewerRepository = reviewerRepository;
-        this.reviewRepository = reviewRepository;
-        this.showRepository = showRepository;
-        this.genreRepository = genreRepository;
-    }
-
+    ReviewerRepository reviewerRepository;
+    @Autowired
+    ReviewRepository reviewRepository;
+    @Autowired
+    ShowRepository showRepository;
+    @Autowired
+    GenreRepository genreRepository;
+    
     @Override
     @Transactional
     public void addNewReview(AddReviewPayload addReviewPayload, String email) {

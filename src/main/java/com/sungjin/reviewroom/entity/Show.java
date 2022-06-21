@@ -1,5 +1,6 @@
 package com.sungjin.reviewroom.entity;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +14,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -33,6 +37,14 @@ public class Show {
 
     @Column(name = "name")
     private String name;
+
+    @Column(name = "first_reviewed_date")
+    @CreationTimestamp
+    private Date firstReviewedDate;
+
+    @Column(name = "lately_reviewed_date")
+    @UpdateTimestamp
+    private Date latelyReviewedDate;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "show")
     @JsonIgnore
