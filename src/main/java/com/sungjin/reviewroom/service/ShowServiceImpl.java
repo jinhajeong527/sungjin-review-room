@@ -52,7 +52,7 @@ public class ShowServiceImpl implements ShowService {
     @Override
     @Transactional
     public Page<Show> getTheMostReviewedShows() {
-        return showRepository.findAllWithReviewsCount(PageRequest.of(0, 10, Sort.by( Sort.Direction.DESC, "reviewsCount")));
+        return showRepository.findAllWithReviewsCount(PageRequest.of(0, 10, Sort.by( Sort.Direction.DESC, "reviewsCount" )));
     }
     
 }

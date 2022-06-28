@@ -46,7 +46,7 @@ public class ReviewServiceImpl implements ReviewService {
      
         //DB에 저장된 show인지 확인한다.
         Optional<Show> isExistingShow = showRepository.findById(showId);
-       
+
         //새로 등록하는 Show일 경우에 Genre 등록해주기 
         if(!isExistingShow.isPresent()) {
             //해당 show에 genre도 등록한다.
@@ -55,12 +55,18 @@ public class ReviewServiceImpl implements ReviewService {
                 Genre genreFromDb = genreRepository.getById(genre.getId());
                 receivedShow.addGenre(genreFromDb);
             }
-        }else { //이미 디비에 등록된 Show일 경우
+        } else { //이미 디비에 등록된 Show일 경우
             receivedShow = showRepository.getById(showId);
         }
         receivedShow.addReview(review);
-        reviewRepository.save(review);
-      
+        Review savedReview = reviewRepository.save(review);
+
+        // 처음 리뷰가 등록되는 쇼가 아닐 경우에 latelyReviewedDate를 업데이트 해준다.
+        if(isExistingShow.isPresent()) {
+            receivedShow.setLatelyReviewedDate(savedReview.getLastUpdated());
+            showRepository.save(receivedShow);
+        }
+        
     }
     
 }
