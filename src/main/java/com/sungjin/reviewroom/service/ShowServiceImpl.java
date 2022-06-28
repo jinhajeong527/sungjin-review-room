@@ -5,7 +5,11 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.sungjin.reviewroom.dao.GenreRepository;
@@ -28,7 +32,7 @@ public class ShowServiceImpl implements ShowService {
     GenreRepository genreRepository;
     @Autowired
     ReviewRepository reviewRepository;
-
+   
     @Override
     @Transactional
     public Set<Show> getLatestPrefrredShows(String email) {
@@ -40,9 +44,15 @@ public class ShowServiceImpl implements ShowService {
         Set<Genre> genres = reviewer.getGenres();
         // 장르 선호가 16,18인 리뷰어가 장르가 16, 18인 쇼를 가져온다면 리스트로 받아올 시에 중복될 수 있기 때문에 
         // Set<Show>로 받아서 중복을 제거했다.
-        Set<Show> list = showRepository.findAllByGenresInAndReviewsNotInOrderByLatelyReviewedDateDesc(genres, reviews);
+        Set<Show> set = showRepository.findAllByGenresInAndReviewsNotInOrderByLatelyReviewedDateDesc(genres, reviews);
         
-        return list;
+        return set;
+    }
+
+    @Override
+    @Transactional
+    public Page<Show> getTheMostReviewedShows() {
+        return showRepository.findAllWithReviewsCount(PageRequest.of(0, 10, Sort.by( Sort.Direction.DESC, "reviewsCount")));
     }
     
 }

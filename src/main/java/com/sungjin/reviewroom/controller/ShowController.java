@@ -4,10 +4,11 @@ import com.sungjin.reviewroom.entity.Show;
 import com.sungjin.reviewroom.security.UserDetailsImpl;
 import com.sungjin.reviewroom.service.ShowService;
 
-import java.util.List;
 import java.util.Set;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,5 +31,11 @@ public class ShowController {
         String userEmail = userDetails.getEmail();
         Set<Show> show = showService.getLatestPrefrredShows(userEmail);
         return show;
+    }
+
+    @GetMapping("/mostReviewed")
+    public Page<Show> getTheMostReviewedShows() {
+        Page<Show> mostReviewedShows = showService.getTheMostReviewedShows();
+        return mostReviewedShows;
     }
 }
