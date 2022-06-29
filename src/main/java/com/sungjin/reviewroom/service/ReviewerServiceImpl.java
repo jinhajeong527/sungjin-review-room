@@ -15,6 +15,7 @@ import com.sungjin.reviewroom.dto.SignupPayload;
 import com.sungjin.reviewroom.entity.Genre;
 import com.sungjin.reviewroom.entity.Reviewer;
 import com.sungjin.reviewroom.entity.Role;
+import com.sungjin.reviewroom.entity.Show;
 import com.sungjin.reviewroom.entity.VerificationToken;
 import com.sungjin.reviewroom.exception.ReviewerAlreadyExistException;
 import com.sungjin.reviewroom.model.EnumRole;
@@ -126,6 +127,15 @@ public class ReviewerServiceImpl implements ReviewerService {
         VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
         Reviewer reviewer = reviewerRepository.getById(verificationToken.getReviewer().getId());
         return reviewer;
+    }
+
+    @Override
+    public int addToWishList(Show show, String reviewerEmail) {
+        Reviewer reviewer = reviewerRepository.getByEmail(reviewerEmail);
+        Set<Show> wishlist = reviewer.getShows();
+        wishlist.add(show);
+        reviewerRepository.save(reviewer);
+        return 1;
     }
 
     

@@ -56,16 +56,23 @@ public class Reviewer {
     @Column(name = "verified")
     private boolean verified;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH,
-                          CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "reviewer")
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.DETACH,
+                           CascadeType.MERGE, CascadeType.REFRESH }, mappedBy = "reviewer")
     private Set<Review> reviews = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, 
-                                                   CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, 
+                                                    CascadeType.MERGE, CascadeType.REFRESH })
     @JoinTable(name = "reviewer_genre",
                joinColumns = @JoinColumn(name = "reviewer_id"),
                inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private Set<Genre> genres;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, 
+                                                    CascadeType.MERGE, CascadeType.REFRESH })
+    @JoinTable(name = "wishlist",
+               joinColumns = @JoinColumn(name = "reviewer_id"),
+               inverseJoinColumns = @JoinColumn(name = "show_id"))
+    private Set<Show> shows;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.DETACH,
                                                    CascadeType.MERGE, CascadeType.REFRESH})
