@@ -6,11 +6,31 @@ spring:
  data:
   rest:
     base-path: /api
+ jpa:
+  show-sql: true
+  hibernate:
+    ddl-auto: update
  security:
     user:
       password: test123 #임시 로그인 비밀번호. 아이디는 user
     filter:
       order: 10 #For Custom Filter
+ mail:
+    host: smtp.gmail.com
+    port: 465
+    protocol: smtp
+    username: sungjin.reviewroom@gmail.com
+    password: flqbdjemals1!
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          starttls:
+            enable: true
 # App Properties
 sungjin:
   reviewroom:

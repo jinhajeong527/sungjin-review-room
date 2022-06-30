@@ -38,4 +38,12 @@ public class ShowController {
         Page<Show> mostReviewedShows = showService.getTheMostReviewedShows();
         return mostReviewedShows;
     }
+
+    @GetMapping("/wishlist")
+    public Set<Show> getShowsAddedToWishlist(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        String userEmail = userDetails.getEmail();
+        Set<Show> wishlistShows = showService.getShowsAddedToWishlist(userEmail);
+        return wishlistShows;
+    }
 }

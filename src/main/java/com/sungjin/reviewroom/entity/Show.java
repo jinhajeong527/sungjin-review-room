@@ -32,7 +32,6 @@ import lombok.Setter;
 public class Show {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "name")

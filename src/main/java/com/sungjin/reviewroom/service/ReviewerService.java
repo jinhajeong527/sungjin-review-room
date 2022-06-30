@@ -2,7 +2,6 @@ package com.sungjin.reviewroom.service;
 
 import com.sungjin.reviewroom.dto.SignupPayload;
 import com.sungjin.reviewroom.entity.Reviewer;
-import com.sungjin.reviewroom.entity.Show;
 import com.sungjin.reviewroom.entity.VerificationToken;
 
 public interface ReviewerService {
@@ -12,5 +11,5 @@ public interface ReviewerService {
     Reviewer registerUser(SignupPayload signupPayload);
     void saveSignedUpReviewer(Reviewer reviewer);
     Reviewer getReviewer(String token);
-    int addToWishList(Show show, String reviewerEmail);
+    int addToWishList(int showId, String reviewerEmail);
 }

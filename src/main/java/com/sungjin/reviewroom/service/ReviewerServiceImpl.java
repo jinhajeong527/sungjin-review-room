@@ -2,6 +2,7 @@ package com.sungjin.reviewroom.service;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ import javax.transaction.Transactional;
 import com.sungjin.reviewroom.dao.GenreRepository;
 import com.sungjin.reviewroom.dao.ReviewerRepository;
 import com.sungjin.reviewroom.dao.RoleRepository;
+import com.sungjin.reviewroom.dao.ShowRepository;
 import com.sungjin.reviewroom.dao.VerificationTokenRepository;
 import com.sungjin.reviewroom.dto.SignupPayload;
 import com.sungjin.reviewroom.entity.Genre;
@@ -31,6 +33,8 @@ public class ReviewerServiceImpl implements ReviewerService {
     ReviewerRepository reviewerRepository;
     @Autowired
     RoleRepository roleRepository;
+    @Autowired
+    ShowRepository showRepository;
     @Autowired
     VerificationTokenRepository verificationTokenRepository;
     @Autowired
@@ -130,10 +134,16 @@ public class ReviewerServiceImpl implements ReviewerService {
     }
 
     @Override
-    public int addToWishList(Show show, String reviewerEmail) {
+    @Transactional
+    public int addToWishList(int showId, String reviewerEmail) {
         Reviewer reviewer = reviewerRepository.getByEmail(reviewerEmail);
         Set<Show> wishlist = reviewer.getShows();
-        wishlist.add(show);
+        Optional<Show> theShowOptional = showRepository.findById(showId);
+        // 리뷰 등록된 적 없는 쇼는 위시리스트 등록할 수 없다.
+        if(!theShowOptional.isPresent()) return 0;
+
+        wishlist.add(theShowOptional.get());
+        reviewer.setShows(wishlist);
         reviewerRepository.save(reviewer);
         return 1;
     }
