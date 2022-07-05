@@ -101,15 +101,16 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupPayload signupPayload, HttpServletRequest request) {
         try { //Reviewer 등록 시도
-            System.out.println(signupPayload.getGenres());
             Reviewer reviewerWhoJustSignedUp = reviewerService.registerUser(signupPayload);
             String appUrl = request.getContextPath();
+            // 이벤트의 발행
             eventPublisher.publishEvent(new OnSignupCompleteEvent(reviewerWhoJustSignedUp, request.getLocale(), appUrl));
         } catch(ReviewerAlreadyExistException raeException) {  //존재하는 Reviewer일 경우
              return ResponseEntity
 			 		.badRequest()
 			 		.body(new MessageResponse("Error: Email is already in use!"));
         } catch(RuntimeException exception) {
+             System.out.println(exception.getMessage());
              return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Error has occured while sending verification email"));

@@ -20,7 +20,7 @@ spring:
     port: 465
     protocol: smtp
     username: sungjin.reviewroom@gmail.com
-    password: flqbdjemals1!
+    password: wlliuacgjtdzctsf
     properties:
       mail:
         transport:
@@ -39,4 +39,4 @@ sungjin:
      jwtExpirationMs: 86400000
 
 server:
-    port: 8080
+    port: 8081
