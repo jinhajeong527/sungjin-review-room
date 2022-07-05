@@ -35,7 +35,7 @@ public class UserDetailsImpl implements UserDetails {
                                             .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                                             .collect(Collectors.toList());
         return new UserDetailsImpl(reviewer.getId(), 
-                                   reviewer.getFirstName() + " " + reviewer.getLastName(), //이렇게 사용가능한지 체크 필요하다.
+                                   reviewer.getFirstName() + " " + reviewer.getLastName(), //유저 네임 들어가는 부분이어서 이름과 성을 더해서 작성했다. 
                                    reviewer.getEmail(), 
                                    reviewer.getPassword(), 
                                    authorities,

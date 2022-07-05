@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.sungjin.reviewroom.dao.GenreRepository;
-import com.sungjin.reviewroom.dao.ReviewerRepository;
 import com.sungjin.reviewroom.dao.RoleRepository;
 import com.sungjin.reviewroom.dto.JwtResponsePayload;
 import com.sungjin.reviewroom.dto.LoginPayload;
@@ -27,7 +26,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -52,10 +50,6 @@ public class AuthController {
     ApplicationEventPublisher eventPublisher;
     @Autowired
     ReviewerService reviewerService;
-    // ReviewerRepository 후에 코드정리 하면서 서비스 단으로 옮길 것.
-    @Autowired
-    ReviewerRepository reviewerRepository;
-    //
     @Autowired
     GenreRepository genreRepository;
     @Autowired
@@ -66,24 +60,19 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
-    @GetMapping("/all") //ROLE 없어도 접근 가능한지 확인하기 위한 테스트 REST API
-	public String allAccess() {
-		return "Public Content.";
-	}
-
-    //ROLE REVIEWER 있는 사람만 접근 가능한지 확인하기 위한 테스트 REST API
-    @GetMapping("/user")
-    @PreAuthorize("hasRole('REVIEWER')")
-	public String userAccess() {
-		return "User Content.";
-	}
-
     @PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginPayload loginPayload) {
+        System.out.println("here1sdfsdfs1");
 		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginPayload.getEmail(), loginPayload.getPassword()));
+				                        new UsernamePasswordAuthenticationToken(
+                                            loginPayload.getEmail(), loginPayload.getPassword()
+                                            )
+                                        );
+        System.out.println("here11"); //여기까지는 오지도 못함.
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+       
 		String jwt = jwtUtils.generateJwtToken(authentication);
+        System.out.println("jwt " +jwt);
        
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         	
