@@ -11,6 +11,7 @@ import com.sungjin.reviewroom.dao.GenreRepository;
 import com.sungjin.reviewroom.dao.RoleRepository;
 import com.sungjin.reviewroom.dto.JwtResponsePayload;
 import com.sungjin.reviewroom.dto.LoginPayload;
+import com.sungjin.reviewroom.dto.LoginResponsePayload;
 import com.sungjin.reviewroom.dto.MessageResponse;
 import com.sungjin.reviewroom.dto.SignupPayload;
 import com.sungjin.reviewroom.entity.Reviewer;
@@ -27,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -62,13 +64,19 @@ public class AuthController {
 
     @PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginPayload loginPayload) {
-        System.out.println("here1sdfsdfs1");
-		Authentication authentication = authenticationManager.authenticate(
-				                        new UsernamePasswordAuthenticationToken(
-                                            loginPayload.getEmail(), loginPayload.getPassword()
-                                            )
-                                        );
-        System.out.println("here11"); //여기까지는 오지도 못함.
+        Authentication authentication = null;
+		try {
+            authentication = authenticationManager.authenticate(
+				             new UsernamePasswordAuthenticationToken(loginPayload.getEmail(), loginPayload.getPassword())
+                             );
+        } catch(DisabledException exception) {
+            // 아직 회원가입 후 이메일 인증하지 않아서 verified 되지 않은 리뷰어가 로그인 시도 했을 경우
+            String email = loginPayload.getEmail();
+            String token = reviewerService.findTokenWithLoginInfo(email);
+            LoginResponsePayload payload = new LoginResponsePayload("This reviewer is not verified yet", token);
+            return ResponseEntity.badRequest().body(payload);
+        }
+        // Authentication 오브젝트 사용하여 Security Context 업데이트 한다.
 		SecurityContextHolder.getContext().setAuthentication(authentication);
        
 		String jwt = jwtUtils.generateJwtToken(authentication);

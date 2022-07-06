@@ -12,4 +12,5 @@ public interface ReviewerService {
     void saveSignedUpReviewer(Reviewer reviewer);
     Reviewer getReviewer(String token);
     int addToWishList(int showId, String reviewerEmail);
+    String findTokenWithLoginInfo(String email);
 }

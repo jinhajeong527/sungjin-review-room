@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity // Spring이 해당 클래스 Global Web Security로 사용할 수 있도록 함.
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true) // @PreAuthorize 및 @PostAuthorize 사용할 수 있게하는 설정. 기본값은 false
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     // User를 username에 의해 로드하는 메서드(loadUserByUsername) 갖고 있고, UserDetails 리턴한다.

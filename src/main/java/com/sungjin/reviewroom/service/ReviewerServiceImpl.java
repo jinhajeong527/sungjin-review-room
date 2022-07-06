@@ -148,6 +148,15 @@ public class ReviewerServiceImpl implements ReviewerService {
         return 1;
     }
 
+    @Override
+    @Transactional
+    public String findTokenWithLoginInfo(String email) {
+        Reviewer reviewer = reviewerRepository.getByEmail(email);
+        VerificationToken verificationToken = verificationTokenRepository.findByReviewer(reviewer);
+        String token = verificationToken.getToken();
+        return token;
+    }
+
     
     
 }
