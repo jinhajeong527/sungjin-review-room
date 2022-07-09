@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sungjin.reviewroom.dto.MessageResponse;
 import com.sungjin.reviewroom.dto.WishListPayLoad;
+import com.sungjin.reviewroom.exception.ShowNotPresentException;
+import com.sungjin.reviewroom.exception.WishlistAlreadyExistException;
 import com.sungjin.reviewroom.security.UserDetailsImpl;
 import com.sungjin.reviewroom.service.ReviewerService;
 
@@ -25,9 +27,14 @@ public class ReviewerController {
     @PostMapping("/wishlist")
     public ResponseEntity<?> addToWishList(@RequestBody WishListPayLoad wishListPayLoad, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String userEmail = userDetails.getEmail();
-        int showId = wishListPayLoad.getShowId();
-        int result = reviewerService.addToWishList(showId, userEmail);
+        int result;
+        try {
+            result = reviewerService.addToWishList(wishListPayLoad.getShowId(), userDetails.getEmail());
+        } catch(WishlistAlreadyExistException exception) {
+            return ResponseEntity.badRequest().body(new MessageResponse("This show already exists in reviewer's wishlist"));
+        } catch(ShowNotPresentException exception) {
+            return ResponseEntity.badRequest().body(new MessageResponse("This show cannot be added to wishlist cause it is never been reviewed before on our service"));
+        }
         if(result == 1) return ResponseEntity.ok(new MessageResponse("Wishlist added successfully!"));
         else return ResponseEntity.badRequest().body(new MessageResponse("Your attempt to add to wishlist has failed"));
     }

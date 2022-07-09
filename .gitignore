@@ -395,3 +395,8 @@ target/classes/com/sungjin/reviewroom/controller/ReviewerController.class
 target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
 target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
 target/classes/com/sungjin/reviewroom/dto/LoginResponsePayload.class
+target/classes/com/sungjin/reviewroom/exception/WishlistAlreadyExistException.class
+.gitignore
+target/classes/com/sungjin/reviewroom/dao/WishlistRepository.class
+target/classes/com/sungjin/reviewroom/entity/Wishlist.class
+.gitignore

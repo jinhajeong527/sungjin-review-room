@@ -31,6 +31,6 @@ public class Role {
     private EnumRole name;
 
     public Role(EnumRole name) {
-		this.name = name;
-	}
+	      this.name = name;
+	  }
 }
