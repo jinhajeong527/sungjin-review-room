@@ -27,10 +27,9 @@ public class ShowController {
     
     @GetMapping("/preferred")
     @PreAuthorize("hasRole('REVIEWER')")
-    public Set<Show> getLatestPrefrredShows(Authentication authentication) {
+    public Page<Show> getLatestPrefrredShows(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String userEmail = userDetails.getEmail();
-        Set<Show> show = showService.getLatestPrefrredShows(userEmail);
+        Page<Show> show = showService.getLatestPrefrredShows(userDetails.getEmail());
         return show;
     }
 
