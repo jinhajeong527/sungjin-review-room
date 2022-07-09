@@ -67,9 +67,7 @@ public class Reviewer {
                inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private Set<Genre> genres;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.DETACH, 
-                                                   CascadeType.MERGE, CascadeType.REFRESH }, 
-               mappedBy = "reviewer")
+    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL }, mappedBy = "reviewer")
     private Set<Wishlist> wishlist;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.DETACH,
