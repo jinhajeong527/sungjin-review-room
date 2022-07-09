@@ -19,10 +19,12 @@ import com.sungjin.reviewroom.dao.GenreRepository;
 import com.sungjin.reviewroom.dao.ReviewRepository;
 import com.sungjin.reviewroom.dao.ReviewerRepository;
 import com.sungjin.reviewroom.dao.ShowRepository;
+import com.sungjin.reviewroom.dao.WishlistRepository;
 import com.sungjin.reviewroom.entity.Genre;
 import com.sungjin.reviewroom.entity.Review;
 import com.sungjin.reviewroom.entity.Reviewer;
 import com.sungjin.reviewroom.entity.Show;
+import com.sungjin.reviewroom.entity.Wishlist;
 
 @Service
 public class ShowServiceImpl implements ShowService {
@@ -35,7 +37,11 @@ public class ShowServiceImpl implements ShowService {
     GenreRepository genreRepository;
     @Autowired
     ReviewRepository reviewRepository;
+    @Autowired
+    WishlistRepository wishlistRepository;
    
+    Pageable pageable;
+
     @Override
     @Transactional
     public Set<Show> getLatestPrefrredShows(String email) {
@@ -63,17 +69,17 @@ public class ShowServiceImpl implements ShowService {
         // 지난 달 마지막 날짜 설정하기
         calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
         Date lastDateOfLstMonth = calendar.getTime();
-        Pageable pageable = PageRequest.of(0, 10, Sort.by( Sort.Direction.DESC, "reviewsCount" ));
+        pageable = PageRequest.of(0, 10, Sort.by( Sort.Direction.DESC, "reviewsCount" ));
         
         return showRepository.findAllWithReviewsCount(pageable, firstDateOfLastMonth, lastDateOfLstMonth);
     }
 
     @Override
     @Transactional
-    public Set<Show> getShowsAddedToWishlist(String email) {
+    public Page<Wishlist> getShowsAddedToWishlist(String email) {
         Reviewer reviewer = reviewerRepository.getByEmail(email);
-        Set<Show> show = reviewer.getShows();
-        return show;
+        pageable = PageRequest.of(0, 3); 
+        return wishlistRepository.findAllByReviewerOrderByCreatedDateDesc(reviewer, pageable);
     }
     
 }

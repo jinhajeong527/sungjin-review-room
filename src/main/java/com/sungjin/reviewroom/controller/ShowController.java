@@ -1,6 +1,7 @@
 package com.sungjin.reviewroom.controller;
 
 import com.sungjin.reviewroom.entity.Show;
+import com.sungjin.reviewroom.entity.Wishlist;
 import com.sungjin.reviewroom.security.UserDetailsImpl;
 import com.sungjin.reviewroom.service.ShowService;
 
@@ -40,10 +41,9 @@ public class ShowController {
     }
 
     @GetMapping("/wishlist")
-    public Set<Show> getShowsAddedToWishlist(Authentication authentication) {
+    public Page<Wishlist> getShowsAddedToWishlist(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String userEmail = userDetails.getEmail();
-        Set<Show> wishlistShows = showService.getShowsAddedToWishlist(userEmail);
+        Page<Wishlist> wishlistShows = showService.getShowsAddedToWishlist(userDetails.getEmail());
         return wishlistShows;
     }
 }

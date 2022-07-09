@@ -14,6 +14,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,6 +33,7 @@ public class Wishlist {
 
     @ManyToOne
     @JoinColumn(name="reviewer_id")
+    @JsonIgnore
     private Reviewer reviewer;
 
     @OneToOne

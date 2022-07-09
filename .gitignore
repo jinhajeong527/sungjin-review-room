@@ -400,3 +400,4 @@ target/classes/com/sungjin/reviewroom/exception/WishlistAlreadyExistException.cl
 target/classes/com/sungjin/reviewroom/dao/WishlistRepository.class
 target/classes/com/sungjin/reviewroom/entity/Wishlist.class
 .gitignore
+target/classes/com/sungjin/reviewroom/exception/ShowNotPresentException.class
