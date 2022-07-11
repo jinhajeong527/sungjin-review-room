@@ -149,7 +149,7 @@ public class ReviewerServiceImpl implements ReviewerService {
         Optional<Show> theShowOptional = showRepository.findById(showId);
         if(!theShowOptional.isPresent()) 
             throw new ShowNotPresentException("This show cannot be added to wishlist cause it is never been reviewed before on our service");
-       
+        // 이미 위시리스트에 등록되어 있을 경우엔 등록할 수 없다.
         if(wishlist != null)
             for(Wishlist wish : wishlist) 
                 if(wish.getShow().getId() == showId) 
@@ -158,6 +158,7 @@ public class ReviewerServiceImpl implements ReviewerService {
         Wishlist newWishlist = new Wishlist(theShowOptional.get(), reviewer);
         wishlist.add(newWishlist);
         reviewer.setWishlist(wishlist);
+        // Cascade.ALL에 의해 리뷰어 엔티티 저장되면서 위시리스트 엔티티도 같이 저장될 것이다.
         Reviewer updatedReviewer = reviewerRepository.save(reviewer);
         if(updatedReviewer != null) return 1;
         else return 0;

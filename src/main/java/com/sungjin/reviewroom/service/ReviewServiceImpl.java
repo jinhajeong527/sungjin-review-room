@@ -4,6 +4,10 @@ import com.sungjin.reviewroom.dao.ReviewRepository;
 import com.sungjin.reviewroom.dao.ReviewerRepository;
 import com.sungjin.reviewroom.dao.ShowRepository;
 
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +21,7 @@ import com.sungjin.reviewroom.entity.Show;
 import com.sungjin.reviewroom.entity.Genre;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,7 +34,10 @@ public class ReviewServiceImpl implements ReviewService {
     ShowRepository showRepository;
     @Autowired
     GenreRepository genreRepository;
-    
+    @Value("${sungjin.reviewroom.app.filePath}")
+    String filePath;
+
+
     @Override
     @Transactional
     public void addNewReview(AddReviewPayload addReviewPayload, String email) {
@@ -37,8 +45,8 @@ public class ReviewServiceImpl implements ReviewService {
         Reviewer reviewer = reviewerRepository.getByEmail(email);
 
         //AddReviewPayload에서 showId 받아온다.
-        int showId = addReviewPayload.getShow().getId();
         Show receivedShow = addReviewPayload.getShow();
+        int showId = receivedShow.getId();
        
         //Review 얻어오기
         Review review = addReviewPayload.getReview();
@@ -47,7 +55,7 @@ public class ReviewServiceImpl implements ReviewService {
         //DB에 저장된 show인지 확인한다.
         Optional<Show> isExistingShow = showRepository.findById(showId);
 
-        //새로 등록하는 Show일 경우에 Genre 등록해주기 
+        //새로 등록하는 Show일 경우에 Genre 등록해주고 이미지 파일 다운로드 받는다.
         if(!isExistingShow.isPresent()) {
             //해당 show에 genre도 등록한다.
             List<Genre> genres = addReviewPayload.getGenres();
@@ -55,6 +63,9 @@ public class ReviewServiceImpl implements ReviewService {
                 Genre genreFromDb = genreRepository.getById(genre.getId());
                 receivedShow.addGenre(genreFromDb);
             }
+            String imageUrl = receivedShow.getImage();
+            downloadShowImage(imageUrl, receivedShow.getName());
+            receivedShow.setImage(filePath + receivedShow.getName());
         } else { //이미 디비에 등록된 Show일 경우
             receivedShow = showRepository.getById(showId);
         }
@@ -67,6 +78,21 @@ public class ReviewServiceImpl implements ReviewService {
             showRepository.save(receivedShow);
         }
         
+    }
+
+
+    public void downloadShowImage(String url, String localFilename) {
+
+        try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream()); 
+             FileOutputStream fileOutputStream = new FileOutputStream(filePath + localFilename)) {
+             byte dataBuffer[] = new byte[1024];
+             int bytesRead;
+             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+                fileOutputStream.write(dataBuffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
 }

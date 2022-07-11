@@ -37,6 +37,7 @@ sungjin:
     app:
      jwtSecret: sungjinReviewRoomSecretKey  
      jwtExpirationMs: 86400000
+     filePath: src/main/resources/images/shows/
 
 server:
     port: 8081
