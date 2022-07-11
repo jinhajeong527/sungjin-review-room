@@ -74,8 +74,7 @@ public class ShowServiceImpl implements ShowService {
         calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
         Date lastDateOfLstMonth = calendar.getTime();
 
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by( Sort.Direction.DESC, "reviewsCount" ));
-        pageable = PageRequest.of(0, 10, Sort.by( Sort.Direction.DESC, "reviewsCount" ));
+        pageable = PageRequest.of(pageNumber, pageSize, Sort.by( Sort.Direction.DESC, "reviewsCount" ));
         
         return showRepository.findAllWithReviewsCount(pageable, firstDateOfLastMonth, lastDateOfLstMonth);
     }

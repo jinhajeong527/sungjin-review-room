@@ -37,6 +37,9 @@ public class Show {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "image")
+    private String image;
+
     @Column(name = "first_reviewed_date")
     @CreationTimestamp
     private Date firstReviewedDate;
@@ -44,6 +47,8 @@ public class Show {
     @Column(name = "lately_reviewed_date")
     @UpdateTimestamp
     private Date latelyReviewedDate;
+    
+    
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "show")
     @JsonIgnore
