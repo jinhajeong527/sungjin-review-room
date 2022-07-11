@@ -54,7 +54,10 @@ public class ShowServiceImpl implements ShowService {
 
     @Override
     @Transactional
-    public Page<Show> getTheMostReviewedShows() {
+    public Page<Show> getTheMostReviewedShows(int pageNumber, int pageSize) {
+        // 임시
+        pageNumber = 0;
+        pageSize = 3;
         Calendar calendar = Calendar.getInstance();
         // 지난 달 1일 설정하기
         calendar.add(Calendar.MONTH, -1);
@@ -63,7 +66,7 @@ public class ShowServiceImpl implements ShowService {
         // 지난 달 마지막 날짜 설정하기
         calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
         Date lastDateOfLstMonth = calendar.getTime();
-        Pageable pageable = PageRequest.of(0, 10, Sort.by( Sort.Direction.DESC, "reviewsCount" ));
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by( Sort.Direction.DESC, "reviewsCount" ));
         
         return showRepository.findAllWithReviewsCount(pageable, firstDateOfLastMonth, lastDateOfLstMonth);
     }

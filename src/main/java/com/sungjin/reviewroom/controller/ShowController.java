@@ -1,5 +1,6 @@
 package com.sungjin.reviewroom.controller;
 
+import com.sungjin.reviewroom.dto.PaginationPayload;
 import com.sungjin.reviewroom.entity.Show;
 import com.sungjin.reviewroom.security.UserDetailsImpl;
 import com.sungjin.reviewroom.service.ShowService;
@@ -13,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,8 +36,11 @@ public class ShowController {
     }
 
     @GetMapping("/mostReviewed")
-    public Page<Show> getTheMostReviewedShows() {
-        Page<Show> mostReviewedShows = showService.getTheMostReviewedShows();
+    public Page<Show> getTheMostReviewedShows(@RequestBody PaginationPayload paginationPayload) {
+        int pageSize = paginationPayload.getPageSize();
+        int pageNumber = paginationPayload.getPageNumber();
+        Page<Show> mostReviewedShows = showService.getTheMostReviewedShows(pageNumber, pageSize);
+        System.out.println(mostReviewedShows.getContent());
         return mostReviewedShows;
     }
 

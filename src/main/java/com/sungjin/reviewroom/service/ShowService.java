@@ -8,6 +8,6 @@ import com.sungjin.reviewroom.entity.Show;
 
 public interface ShowService {
     public Set<Show> getLatestPrefrredShows(String email);
-    public Page<Show> getTheMostReviewedShows();
+    public Page<Show> getTheMostReviewedShows(int pageNumber, int pageSize);
     public Set<Show> getShowsAddedToWishlist(String email);
 }

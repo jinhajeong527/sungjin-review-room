@@ -66,6 +66,10 @@ public class AuthController {
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginPayload loginPayload) {
         Authentication authentication = null;
 		try {
+            /* 
+            UsernamePasswordAuthenticationToken : 
+            An Authentication implementation that is designed for simple presentation of a username and password.
+            */
             authentication = authenticationManager.authenticate(
 				             new UsernamePasswordAuthenticationToken(loginPayload.getEmail(), loginPayload.getPassword())
                              );
