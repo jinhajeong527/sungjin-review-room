@@ -13,13 +13,17 @@ import com.sungjin.reviewroom.dao.ReviewerRepository;
 import com.sungjin.reviewroom.dao.RoleRepository;
 import com.sungjin.reviewroom.dao.ShowRepository;
 import com.sungjin.reviewroom.dao.VerificationTokenRepository;
+import com.sungjin.reviewroom.dao.WishlistRepository;
 import com.sungjin.reviewroom.dto.SignupPayload;
 import com.sungjin.reviewroom.entity.Genre;
 import com.sungjin.reviewroom.entity.Reviewer;
 import com.sungjin.reviewroom.entity.Role;
 import com.sungjin.reviewroom.entity.Show;
 import com.sungjin.reviewroom.entity.VerificationToken;
+import com.sungjin.reviewroom.entity.Wishlist;
 import com.sungjin.reviewroom.exception.ReviewerAlreadyExistException;
+import com.sungjin.reviewroom.exception.ShowNotPresentException;
+import com.sungjin.reviewroom.exception.WishlistAlreadyExistException;
 import com.sungjin.reviewroom.model.EnumRole;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +43,8 @@ public class ReviewerServiceImpl implements ReviewerService {
     VerificationTokenRepository verificationTokenRepository;
     @Autowired
     GenreRepository genreRepository;
+    @Autowired
+    WishlistRepository wishlistRepository;
     @Autowired
     PasswordEncoder encoder;
 
@@ -137,15 +143,24 @@ public class ReviewerServiceImpl implements ReviewerService {
     @Transactional
     public int addToWishList(int showId, String reviewerEmail) {
         Reviewer reviewer = reviewerRepository.getByEmail(reviewerEmail);
-        Set<Show> wishlist = reviewer.getShows();
-        Optional<Show> theShowOptional = showRepository.findById(showId);
+        Set<Wishlist> wishlist = reviewer.getWishlist();
+       
         // 리뷰 등록된 적 없는 쇼는 위시리스트 등록할 수 없다.
-        if(!theShowOptional.isPresent()) return 0;
-
-        wishlist.add(theShowOptional.get());
-        reviewer.setShows(wishlist);
-        reviewerRepository.save(reviewer);
-        return 1;
+        Optional<Show> theShowOptional = showRepository.findById(showId);
+        if(!theShowOptional.isPresent()) 
+            throw new ShowNotPresentException("This show cannot be added to wishlist cause it is never been reviewed before on our service");
+       
+        if(wishlist != null)
+            for(Wishlist wish : wishlist) 
+                if(wish.getShow().getId() == showId) 
+                    throw new WishlistAlreadyExistException("This show already exists in reviewer's wishlist");
+        
+        Wishlist newWishlist = new Wishlist(theShowOptional.get(), reviewer);
+        wishlist.add(newWishlist);
+        reviewer.setWishlist(wishlist);
+        Reviewer updatedReviewer = reviewerRepository.save(reviewer);
+        if(updatedReviewer != null) return 1;
+        else return 0;
     }
 
     @Override

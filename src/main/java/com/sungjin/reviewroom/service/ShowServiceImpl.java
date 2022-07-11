@@ -19,10 +19,12 @@ import com.sungjin.reviewroom.dao.GenreRepository;
 import com.sungjin.reviewroom.dao.ReviewRepository;
 import com.sungjin.reviewroom.dao.ReviewerRepository;
 import com.sungjin.reviewroom.dao.ShowRepository;
+import com.sungjin.reviewroom.dao.WishlistRepository;
 import com.sungjin.reviewroom.entity.Genre;
 import com.sungjin.reviewroom.entity.Review;
 import com.sungjin.reviewroom.entity.Reviewer;
 import com.sungjin.reviewroom.entity.Show;
+import com.sungjin.reviewroom.entity.Wishlist;
 
 @Service
 public class ShowServiceImpl implements ShowService {
@@ -35,19 +37,24 @@ public class ShowServiceImpl implements ShowService {
     GenreRepository genreRepository;
     @Autowired
     ReviewRepository reviewRepository;
+    @Autowired
+    WishlistRepository wishlistRepository;
    
+    Pageable pageable;
+
     @Override
     @Transactional
-    public Set<Show> getLatestPrefrredShows(String email) {
+    public Page<Show> getLatestPrefrredShows(String email) {
         // 이메일 정보로 리뷰어 정보 얻어오기
         Reviewer reviewer = reviewerRepository.getByEmail(email);
         // 해당 리뷰어의 작성 리뷰를 가져온다. 쇼 리스트 조건으로 (NotIn) 넣어줄 것이기 때문이다.
         List<Review> reviews = reviewRepository.findByReviewer(reviewer);
         // 해당 리뷰어 선호 장르 Set 가져오기
         Set<Genre> genres = reviewer.getGenres();
+        pageable = PageRequest.of(0, 3); 
         // 장르 선호가 16,18인 리뷰어가 장르가 16, 18인 쇼를 가져온다면 리스트로 받아올 시에 중복될 수 있기 때문에 
         // Set<Show>로 받아서 중복을 제거했다.
-        Set<Show> set = showRepository.findAllByGenresInAndReviewsNotInOrderByLatelyReviewedDateDesc(genres, reviews);
+        Page<Show> set = showRepository.findDistinctByGenresInAndReviewsNotInOrderByLatelyReviewedDateDesc(genres, reviews, pageable);
         
         return set;
     }
@@ -66,17 +73,19 @@ public class ShowServiceImpl implements ShowService {
         // 지난 달 마지막 날짜 설정하기
         calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
         Date lastDateOfLstMonth = calendar.getTime();
+
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by( Sort.Direction.DESC, "reviewsCount" ));
+        pageable = PageRequest.of(0, 10, Sort.by( Sort.Direction.DESC, "reviewsCount" ));
         
         return showRepository.findAllWithReviewsCount(pageable, firstDateOfLastMonth, lastDateOfLstMonth);
     }
 
     @Override
     @Transactional
-    public Set<Show> getShowsAddedToWishlist(String email) {
+    public Page<Wishlist> getShowsAddedToWishlist(String email) {
         Reviewer reviewer = reviewerRepository.getByEmail(email);
-        Set<Show> show = reviewer.getShows();
-        return show;
+        pageable = PageRequest.of(0, 3); 
+        return wishlistRepository.findAllByReviewerOrderByCreatedDateDesc(reviewer, pageable);
     }
     
 }

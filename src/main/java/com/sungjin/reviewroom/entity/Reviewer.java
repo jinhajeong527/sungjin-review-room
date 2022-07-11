@@ -67,12 +67,8 @@ public class Reviewer {
                inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private Set<Genre> genres;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, 
-                                                    CascadeType.MERGE, CascadeType.REFRESH })
-    @JoinTable(name = "wishlist",
-               joinColumns = @JoinColumn(name = "reviewer_id"),
-               inverseJoinColumns = @JoinColumn(name = "show_id"))
-    private Set<Show> shows;
+    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL }, mappedBy = "reviewer")
+    private Set<Wishlist> wishlist;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.DETACH,
                                                    CascadeType.MERGE, CascadeType.REFRESH})
@@ -99,5 +95,4 @@ public class Reviewer {
             review.setReviewer(this);
         }
     }
-
 }

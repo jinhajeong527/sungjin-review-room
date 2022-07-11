@@ -2,6 +2,7 @@ package com.sungjin.reviewroom.controller;
 
 import com.sungjin.reviewroom.dto.PaginationPayload;
 import com.sungjin.reviewroom.entity.Show;
+import com.sungjin.reviewroom.entity.Wishlist;
 import com.sungjin.reviewroom.security.UserDetailsImpl;
 import com.sungjin.reviewroom.service.ShowService;
 
@@ -28,10 +29,9 @@ public class ShowController {
     
     @GetMapping("/preferred")
     @PreAuthorize("hasRole('REVIEWER')")
-    public Set<Show> getLatestPrefrredShows(Authentication authentication) {
+    public Page<Show> getLatestPrefrredShows(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String userEmail = userDetails.getEmail();
-        Set<Show> show = showService.getLatestPrefrredShows(userEmail);
+        Page<Show> show = showService.getLatestPrefrredShows(userDetails.getEmail());
         return show;
     }
 
@@ -45,10 +45,9 @@ public class ShowController {
     }
 
     @GetMapping("/wishlist")
-    public Set<Show> getShowsAddedToWishlist(Authentication authentication) {
+    public Page<Wishlist> getShowsAddedToWishlist(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String userEmail = userDetails.getEmail();
-        Set<Show> wishlistShows = showService.getShowsAddedToWishlist(userEmail);
+        Page<Wishlist> wishlistShows = showService.getShowsAddedToWishlist(userDetails.getEmail());
         return wishlistShows;
     }
 }
