@@ -2,6 +2,7 @@ package com.sungjin.reviewroom.entity;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,7 +32,8 @@ public class Wishlist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH,
+                          CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name="reviewer_id")
     @JsonIgnore
     private Reviewer reviewer;

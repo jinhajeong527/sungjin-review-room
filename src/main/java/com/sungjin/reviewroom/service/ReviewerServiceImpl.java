@@ -141,7 +141,7 @@ public class ReviewerServiceImpl implements ReviewerService {
 
     @Override
     @Transactional
-    public int addToWishList(int showId, String reviewerEmail) {
+    public int addToWishlist(int showId, String reviewerEmail) {
         Reviewer reviewer = reviewerRepository.getByEmail(reviewerEmail);
         Set<Wishlist> wishlist = reviewer.getWishlist();
        
@@ -166,13 +166,25 @@ public class ReviewerServiceImpl implements ReviewerService {
 
     @Override
     @Transactional
+    public int deleteWishlist(int showId, String reviewerEmail) {
+        Reviewer reviewer = reviewerRepository.getByEmail(reviewerEmail);
+        Set<Wishlist> wishlist = wishlistRepository.getByReviewer(reviewer);
+        if(wishlist != null)
+            for(Wishlist wish : wishlist) 
+                if(wish.getShow().getId() == showId) {
+                    wishlistRepository.delete(wish);
+                    break;
+                }
+        return 1;
+    }
+
+    // 회원가입 인증 하지 않은 리뷰어가 로그인 시도할 때, 토큰 만료 됐을 경우 재인증 시도 페이지로 이동시키는데, 이 때 기존 생성되었던 토큰 데이터가 필요해서 작성한 메서드
+    @Override
+    @Transactional
     public String findTokenWithLoginInfo(String email) {
         Reviewer reviewer = reviewerRepository.getByEmail(email);
         VerificationToken verificationToken = verificationTokenRepository.findByReviewer(reviewer);
         String token = verificationToken.getToken();
         return token;
     }
-
-    
-    
 }
