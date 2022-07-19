@@ -1,13 +1,13 @@
 package com.sungjin.reviewroom.controller;
 
 import com.sungjin.reviewroom.dto.PaginationPayload;
+import com.sungjin.reviewroom.dto.ShowResponsePayload;
 import com.sungjin.reviewroom.entity.Show;
 import com.sungjin.reviewroom.entity.Wishlist;
 import com.sungjin.reviewroom.security.UserDetailsImpl;
 import com.sungjin.reviewroom.service.ShowService;
 
-import java.util.Set;
-
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,23 +29,20 @@ public class ShowController {
     
     @GetMapping("/preferred")
     @PreAuthorize("hasRole('REVIEWER')")
-    public Page<Show> getLatestPrefrredShows(Authentication authentication) {
+    public Page<Show> getLatestPrefrredShows(@RequestBody PaginationPayload paginationPayload, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Page<Show> show = showService.getLatestPrefrredShows(userDetails.getEmail());
         return show;
     }
 
     @GetMapping("/mostReviewed")
-    public Page<Show> getTheMostReviewedShows(@RequestBody PaginationPayload paginationPayload) {
-        int pageSize = paginationPayload.getPageSize();
-        int pageNumber = paginationPayload.getPageNumber();
-        Page<Show> mostReviewedShows = showService.getTheMostReviewedShows(pageNumber, pageSize);
-        System.out.println(mostReviewedShows.getContent());
+    public List<ShowResponsePayload> getTheMostReviewedShows(@RequestBody PaginationPayload paginationPayload) {
+        List<ShowResponsePayload> mostReviewedShows = showService.getTheMostReviewedShows(paginationPayload);  
         return mostReviewedShows;
     }
 
     @GetMapping("/wishlist")
-    public Page<Wishlist> getShowsAddedToWishlist(Authentication authentication) {
+    public Page<Wishlist> getShowsAddedToWishlist(@RequestBody PaginationPayload paginationPayload, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Page<Wishlist> wishlistShows = showService.getShowsAddedToWishlist(userDetails.getEmail());
         return wishlistShows;

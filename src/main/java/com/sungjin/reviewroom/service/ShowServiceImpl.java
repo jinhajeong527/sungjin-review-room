@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 
 
@@ -12,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.sungjin.reviewroom.dao.GenreRepository;
@@ -20,6 +21,8 @@ import com.sungjin.reviewroom.dao.ReviewRepository;
 import com.sungjin.reviewroom.dao.ReviewerRepository;
 import com.sungjin.reviewroom.dao.ShowRepository;
 import com.sungjin.reviewroom.dao.WishlistRepository;
+import com.sungjin.reviewroom.dto.PaginationPayload;
+import com.sungjin.reviewroom.dto.ShowResponsePayload;
 import com.sungjin.reviewroom.entity.Genre;
 import com.sungjin.reviewroom.entity.Review;
 import com.sungjin.reviewroom.entity.Reviewer;
@@ -42,6 +45,10 @@ public class ShowServiceImpl implements ShowService {
    
     Pageable pageable;
 
+    @Autowired
+    EntityManager entityManager;
+
+
     @Override
     @Transactional
     public Page<Show> getLatestPrefrredShows(String email) {
@@ -61,22 +68,30 @@ public class ShowServiceImpl implements ShowService {
 
     @Override
     @Transactional
-    public Page<Show> getTheMostReviewedShows(int pageNumber, int pageSize) {
+    public List<ShowResponsePayload> getTheMostReviewedShows(PaginationPayload paginationPayload) {
         // 임시
-        pageNumber = 0;
-        pageSize = 3;
+        int pageNumber = 0;
+        int pageSize = 3;
         Calendar calendar = Calendar.getInstance();
-        // 지난 달 1일 설정하기
+        // 지난 달의 1일 설정하기
         calendar.add(Calendar.MONTH, -1);
         calendar.set(Calendar.DATE, 1);
         Date firstDateOfLastMonth = calendar.getTime();
-        // 지난 달 마지막 날짜 설정하기
+        // 지난 달의 마지막 날짜 설정하기
         calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
         Date lastDateOfLstMonth = calendar.getTime();
 
-        pageable = PageRequest.of(pageNumber, pageSize, Sort.by( Sort.Direction.DESC, "reviewsCount" ));
-        
-        return showRepository.findAllWithReviewsCount(pageable, firstDateOfLastMonth, lastDateOfLstMonth);
+        Query query = entityManager.createQuery("SELECT new com.sungjin.reviewroom.dto.ShowResponsePayload(s, COUNT(r) AS reviewsCount) " + 
+                                                "FROM Show s JOIN s.reviews r " + 
+                                                "WHERE s.latelyReviewedDate BETWEEN :firstDateOfLastMonth AND :lastDateOfLastMonth " +
+                                                "GROUP BY s " +
+                                                "ORDER BY reviewsCount DESC");
+        query.setParameter("firstDateOfLastMonth", firstDateOfLastMonth);
+        query.setParameter("lastDateOfLastMonth", lastDateOfLstMonth);
+        query.setFirstResult(pageNumber);
+        query.setMaxResults(pageSize);
+        List<ShowResponsePayload> list = query.getResultList();
+        return list;
     }
 
     @Override

@@ -7,8 +7,8 @@ import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+// import org.springframework.data.jpa.repository.Query;
+// import org.springframework.data.repository.query.Param;
 
 import com.sungjin.reviewroom.entity.Genre;
 import com.sungjin.reviewroom.entity.Review;
@@ -21,7 +21,9 @@ public interface ShowRepository extends JpaRepository<Show, Integer>  {
 
     Page<Show> findDistinctByGenresInAndReviewsNotInOrderByLatelyReviewedDateDesc(Set<Genre> list, List<Review> reviews, Pageable pageable);
 
-    @Query(value = "select s, count(r) as reviewsCount from Show s join s.reviews r where s.latelyReviewedDate between :firstDateOfLastMonth and :lastDateOfLastMonth group by s ", 
-    countQuery = "select count(s) from Show s")
-    Page<Show> findAllWithReviewsCount(Pageable pageable, @Param("firstDateOfLastMonth") Date startdate, @Param("lastDateOfLastMonth") Date endDate);
+    // @Query(value = "SELECT s, COUNT(r) AS reviewsCount"+
+    //                " FROM Show s JOIN s.reviews r" + 
+    //                " WHERE s.latelyReviewedDate BETWEEN :firstDateOfLastMonth AND :lastDateOfLastMonth" +
+    //                " GROUP BY s ")
+    // Page<Object> findAllWithReviewsCount(Pageable pageable, @Param("firstDateOfLastMonth") Date startdate, @Param("lastDateOfLastMonth") Date endDate);
 }
