@@ -6,6 +6,8 @@ spring:
  data:
   rest:
     base-path: /api
+ messages:
+    basename: messages
  jpa:
   show-sql: true
   hibernate:
@@ -38,6 +40,7 @@ sungjin:
      jwtSecret: sungjinReviewRoomSecretKey  
      jwtExpirationMs: 86400000
      filePath: src/main/resources/images/shows/
+     apiPrefix: /api
 
 server:
     port: 8081

@@ -23,6 +23,7 @@ import com.sungjin.reviewroom.security.UserDetailsImpl;
 import com.sungjin.reviewroom.service.ReviewerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -44,7 +45,8 @@ import org.springframework.web.context.request.WebRequest;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(path = "${spring.data.rest.base-path}/auth")
+//@RequestMapping(path = "auth")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -58,9 +60,10 @@ public class AuthController {
     RoleRepository roleRepository; 
     @Autowired
     JavaMailSender mailSender;
-    
     @Autowired
     JwtUtils jwtUtils;
+    @Value("${spring.data.rest.base-path}")
+    String appUrl; 
 
     @PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginPayload loginPayload) {
@@ -97,23 +100,21 @@ public class AuthController {
 												 userDetails.getEmail(), 
 												 roles));
 	}
-
+    // 리뷰어 회원가입
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupPayload signupPayload, HttpServletRequest request) {
-        try { //Reviewer 등록 시도
+        try { // Reviewer 등록 시도
             Reviewer reviewerWhoJustSignedUp = reviewerService.registerUser(signupPayload);
-            String appUrl = request.getContextPath();
             // 이벤트의 발행
             eventPublisher.publishEvent(new OnSignupCompleteEvent(reviewerWhoJustSignedUp, request.getLocale(), appUrl));
-        } catch(ReviewerAlreadyExistException raeException) {  //존재하는 Reviewer일 경우
+        } catch(ReviewerAlreadyExistException exception) {  // 존재하는 Reviewer일 경우
              return ResponseEntity
 			 		.badRequest()
 			 		.body(new MessageResponse("Error: Email is already in use!"));
         } catch(RuntimeException exception) {
-             System.out.println(exception.getMessage());
              return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Error has occured while sending verification email"));
+                    .body(new MessageResponse("Error: Error has occured while sending verification email: " + exception.getMessage()));
         }
         
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
