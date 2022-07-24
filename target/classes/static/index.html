@@ -1,1 +1,71 @@
-<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><title>frontend</title><script defer="defer" src="/js/chunk-vendors.639b229a.js"></script><script defer="defer" src="/js/app.4cc17885.js"></script><link href="/css/app.2cf79ad6.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but frontend doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gugi&family=Poor+Story&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/9bdc4b6a23.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+        <header>
+            <img class="logo" src="src/img/logo.png" alt="logo">
+            <div class="main">
+                <span class="title">성진리뷰방</span>
+                <button class="registerBtn" onclick="location.href='review_register/review_register.html'">등록하기</button>
+            </div>
+            <ul class="menu">
+                <li><button onclick="location.href='login/login.html'">로그인</button></li>
+                <li><button onclick="location.href='signup/signup.html'">회원가입</button></li>
+            </ul>
+        </header>
+        <main>
+            <div class="mainImage">
+                <img src="src/img/main.jpg" alt="mainImage">
+            </div>
+            <ul class="contents">
+                <li class="category">
+                    <span class="category__topic" id="preferred">Preferred</span>
+                    <div class="page__btn__box">
+                        <button class="prev__page__btn" onclick="prevPreferredPage()"><i class="fa-solid fa-angle-left"></i></button>
+                        <button class="next__page__btn" onclick="nextPreferredPage()"><i class="fa-solid fa-angle-right"></i></button>
+                    </div>
+                    <ul class="reviews">
+                        <li class="item">
+                            <img src="src/img/items/item1.jpeg" alt="reviewItem">
+                            <span class="item__title">안녕<button class="wishlist__btn" onclick="addWishList()"><i class="fa-solid fa-cart-shopping"></i></button></span>
+                            <span class="item__reviews">100,000 views</span>
+                            </li> 
+                    </ul>
+                </li>
+                <li class="category">
+                    <span class="category__topic" id="monthlyBest">Monthly Best</span>
+                    <div class="page__btn__box">
+                        <button class="prev__page__btn" onclick="prevMonthlyPage()"><i class="fa-solid fa-angle-left"></i></button>
+                        <button class="next__page__btn" onclick="nextMonthlyPage()"><i class="fa-solid fa-angle-right"></i></button>
+                    </div>
+                    <ul class="reviews">
+                    </ul>
+                </li>
+                <li class="category">
+                    <span class="category__topic" id="wishList">My wishlist</span>
+                    <div class="page__btn__box">
+                        <button class="prev__page__btn" onclick="prevWishListPage()"><i class="fa-solid fa-angle-left"></i></button>
+                        <button class="next__page__btn" onclick="nextWishListPage()"><i class="fa-solid fa-angle-right"></i></button>
+                    </div>
+                    <ul class="reviews">
+                    </ul>
+                </li>
+            </ul>
+        </main>
+        <footer>
+            진하와 성정의 리뷰방
+        </footer>
+</body>
+<script type="module" src="main.js" async defer></script>
+</html>

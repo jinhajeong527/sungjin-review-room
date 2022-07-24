@@ -1,0 +1,140 @@
+:root {
+  /*font*/
+  --font-title: 24px;
+  --font-large: 18px;
+  --font-medium: 14px;
+  --font-small: 12px;
+  --font-micro: 10px;
+  --title-font: 'Gugi', cursive;
+
+  /*color*/
+  --color-white: #ffffff;
+  --color-beige: #fff3e0;
+  --color-translucent-beige: rgba(255, 243, 224, 0.3);
+  --color-brown: #ccc0ae;
+
+  /*size*/
+  --item-width: 240px;
+  --item-height: 160px;
+
+  /*padding*/
+  --padding-side: 12px;
+  --padding-top: 8px;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  font-family: 'Poor Story', cursive;
+}
+
+* button,
+* button:hover {
+  border: none;
+  cursor: pointer;
+  background-color: var(--color-white);
+}
+
+/*header*/
+header {
+  max-width: 100%;
+  position: sticky;
+  top: 0;
+  background-color: var(--color-white);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--padding-top) var(--padding-side);
+}
+
+header .main {
+  width: 180px;
+  text-align: center;
+  position: relative;
+}
+
+header .main .title {
+  font-family: 'Gugi', cursive;
+  font-size: var(--font-title);
+}
+
+header .logo {
+  width: 50px;
+  height: 50px;
+}
+
+header .menu {
+  width: 100px;
+  display: flex;
+  justify-content: space-between;
+}
+
+header .main .registerBtn {
+  position: absolute;
+  right: -50px;
+  top: 7px;
+}
+
+header .main .enterBtn i {
+  margin-right: calc(var(--padding-side) / 2);
+}
+
+/*main*/
+main img {
+  width: 80%;
+}
+
+main .mainImage {
+  background-color: var(--color-translucent-beige);
+  text-align: center;
+}
+
+main .contents .category .reviews .item img {
+  width: var(--item-width);
+  height: var(--item-height);
+  object-fit: cover;
+}
+
+main .contents {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: calc(var(--padding-top) * 2);
+}
+
+main .contents .category {
+  width: 80%;
+  text-align: center;
+  margin-top: calc(var(--padding-top) * 2);
+}
+main .contents .category .category__topic {
+  font-size: var(--font-title);
+  border: 2px solid var(--color-brown);
+  border-radius: 50%;
+  padding: 12px 20px;
+  margin-bottom: 20px;
+}
+
+main .contents .category .reviews {
+  margin-top: 10px;
+  margin-bottom: calc(var(--padding-top) * 3);
+  display: flex;
+  justify-content: space-around;
+  padding: 16px 24px;
+  border-radius: 15px;
+}
+
+main .contents .category .reviews .item {
+  display: flex;
+  flex-direction: column;
+}
+
+main .contents .category .page__btn__box {
+  margin-top: 17px;
+}
+
+main .contents .category .page__btn__box button{
+  padding: 8px 12px;
+}
+

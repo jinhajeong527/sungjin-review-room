@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="reauth.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gugi&family=Poor+Story&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/9bdc4b6a23.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="auth__mail__content">
+        <span class="auth__mail__note">이메일 인증이 완료되지 않았습니다. 이메일 인증을 완료해야 서비스를 정상적으로 이용할 수 있습니다.</span>
+        <div class="btn__box">
+            <button class="auth__mail__btn"><i class="fa-solid fa-paper-plane"></i> 인증메일 재발송</button>
+            <button class="home__btn" onclick="location.href='../index.html'"><i class="fa-solid fa-house-chimney"></i> 홈으로 </button>
+        </div>
+    </div>
+</body>
+    <script type="module" src="reauth.js" defer></script>
+</html>

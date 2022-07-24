@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="login.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gugi&family=Poor+Story&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/9bdc4b6a23.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <main class="login__modal">
+        <div class="login__modal__content">
+            <button class="login__modal__close__btn" onclick="location.href='../index.html'"><i class="fa-solid fa-xmark"></i></button>
+            <span class="login__title">로그인</span>
+            <img class= "login__modal__img" src="../src/img/book-shelf.jpeg">
+            <form class="login__form" id="loginForm">
+                <div class="email">
+                    <label for="email"><i class="fa-solid fa-envelope"></i></label>
+                    <input type="email" id="email" name="email" placeholder="이메일을 입력하세요"/>
+                </div>
+                <div class="password">
+                    <label for="password"><i class="fa-solid fa-lock"></i></label>
+                    <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요"/>
+                </div>
+            </form>
+            <button type="button" form="loginForm" class="login__btn"><i class="fa-solid fa-door-closed"></i>입장하기</button>
+        </div>
+    </main>
+</body>
+<script type="module" src="login.js" defer></script>
+</html>

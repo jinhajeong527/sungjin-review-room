@@ -1,0 +1,51 @@
+:root {
+    /*font*/
+    --font-title: 24px;
+    --font-large: 18px;
+    --font-medium: 14px;
+    --font-small: 12px;
+    --font-micro: 10px;
+    --title-font: 'Gugi', cursive;
+  
+    /*color*/
+    --color-white: #ffffff;
+    --color-beige: #fff3e0;
+    --color-translucent-beige: rgba(255, 243, 224, 0.3);
+    --color-brown: #ccc0ae;
+    --color-darkbrown: #868078;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Poor Story', cursive;
+}
+
+.auth__mail__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.auth__mail__note {
+    margin: 10px 0;
+}
+
+.auth__mail__btn, .home__btn {
+    border: none;
+    outline: none;
+    background-color: white;
+    font-size: var(--font-large);
+    cursor: pointer;
+    background-color: var(--color-brown);
+    padding: 6px 10px;
+    border-radius: 10px;
+    width: 180px;
+}
+
+.auth__mail__btn:hover {
+    transform: scale(1.2);
+}
+
+.auth__mail__btn i, .home__btn i {
+    margin-right: 10px;
+}
