@@ -14,12 +14,14 @@ import com.sungjin.reviewroom.dto.LoginPayload;
 import com.sungjin.reviewroom.dto.LoginResponsePayload;
 import com.sungjin.reviewroom.dto.MessageResponse;
 import com.sungjin.reviewroom.dto.SignupPayload;
+import com.sungjin.reviewroom.entity.RefreshToken;
 import com.sungjin.reviewroom.entity.Reviewer;
 import com.sungjin.reviewroom.entity.VerificationToken;
 import com.sungjin.reviewroom.event.OnSignupCompleteEvent;
 import com.sungjin.reviewroom.exception.ReviewerAlreadyExistException;
 import com.sungjin.reviewroom.security.JwtUtils;
 import com.sungjin.reviewroom.security.UserDetailsImpl;
+import com.sungjin.reviewroom.service.RefreshTokenService;
 import com.sungjin.reviewroom.service.ReviewerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +64,9 @@ public class AuthController {
     JavaMailSender mailSender;
     @Autowired
     JwtUtils jwtUtils;
+    @Autowired
+    RefreshTokenService refreshTokenService;
+
     @Value("${spring.data.rest.base-path}")
     String appUrl; 
 
@@ -93,8 +98,9 @@ public class AuthController {
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
-               
-		return ResponseEntity.ok(new JwtResponsePayload(jwt, 
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());      
+		return ResponseEntity.ok(new JwtResponsePayload(jwt,
+                                                 refreshToken.getToken(), 
 												 userDetails.getId(), 
 												 userDetails.getUsername(), 
 												 userDetails.getEmail(), 

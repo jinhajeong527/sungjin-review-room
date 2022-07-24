@@ -17,7 +17,7 @@ import com.sungjin.reviewroom.dto.AddReviewPayload;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("api/review")
+@RequestMapping(path = "${spring.data.rest.base-path}/review")
 public class ReviewController {
 
     @Autowired

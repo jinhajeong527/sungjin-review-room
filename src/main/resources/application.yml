@@ -38,7 +38,8 @@ sungjin:
   reviewroom:
     app:
      jwtSecret: sungjinReviewRoomSecretKey  
-     jwtExpirationMs: 86400000
+     jwtExpirationMs: 3600000 
+     jwtRefreshExpirationMs: 86400000
      filePath: src/main/resources/images/shows/
      apiPrefix: /api
 
