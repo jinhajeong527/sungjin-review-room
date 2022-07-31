@@ -4,7 +4,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import com.sungjin.reviewroom.dao.GenreRepository;
@@ -71,7 +73,7 @@ public class AuthController {
     String appUrl; 
 
     @PostMapping("/signin")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginPayload loginPayload) {
+	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginPayload loginPayload, HttpServletResponse httpServletResponse) {
         Authentication authentication = null;
 		try {
             /* 
@@ -98,7 +100,14 @@ public class AuthController {
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());      
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+        
+        // JWT 토큰 response header에 쿠키로 심어주기
+        Cookie jwtCookie = new Cookie("jwt", jwt);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setMaxAge(60*60);
+        httpServletResponse.addCookie(jwtCookie);
+
 		return ResponseEntity.ok(new JwtResponsePayload(jwt,
                                                  refreshToken.getToken(), 
 												 userDetails.getId(), 
