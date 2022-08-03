@@ -1,9 +1,12 @@
 package com.sungjin.reviewroom.security;
 
 import java.io.IOException;
+//import java.util.Arrays;
+//import java.util.Optional;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+//import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 
 @Description("Performs Request Filtering")
 public class AuthTokenFilter extends OncePerRequestFilter {
@@ -66,6 +70,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         
     }
     private String parseJwt(HttpServletRequest request) {
+
         String jwt = jwtUtils.getJwtFromCookies(request);
         return jwt;
         
@@ -75,6 +80,16 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         //     return headerAuth.substring(7, headerAuth.length());
         // }
         // return null;
+
+        /* 
+        client에서 요청 보낼 때마다 쿠키로 넣어주는 것이라면 아래의 코드로 수정되어야 할 것이다.
+        Optional<String> value = Arrays.stream(request.getCookies())
+                             .filter(c -> "jwt".equals(c.getName()))
+                             .map(Cookie::getValue).findAny();
+         String valueStr = value.get();
+         return valueStr;
+        */
+       
     }
     
 }
