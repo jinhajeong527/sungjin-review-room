@@ -20,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity // Spring이 해당 클래스 Global Web Security로 사용할 수 있도록 함.
+@EnableWebSecurity // Spring이 해당 클래스 Global Web Security로 해당 클래스 사용할 수 있도록 함.
 @EnableGlobalMethodSecurity(prePostEnabled = true) // @PreAuthorize 및 @PostAuthorize 사용할 수 있게하는 설정. 기본값은 false
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     /*
       스프링에 CORS 및 CSRF 설정 어떻게 할 것인지 말하는 역할
     - 모든 유저가 authenticated 되기를 원하거나, 
-    - 어떤 필터 사용되기를 원하거나(AuthTokenFilter),
+    - 어떤 필터 사용되기를 원하거나(우리프로젝트는 AuthTokenFilter),
     - 언제 작동하길 원하는지를 설정해줄 때나(UsernamePasswordAuthenticationFilter 전에 필터 작동), 
     - 어떤 예외 핸들러가 선택되기를 원하는 지(AuthEntryPointJwt) 등 지정할 때
     */

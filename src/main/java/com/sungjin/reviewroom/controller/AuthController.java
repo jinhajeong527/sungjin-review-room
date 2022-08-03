@@ -27,6 +27,8 @@ import com.sungjin.reviewroom.service.ReviewerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -91,15 +93,16 @@ public class AuthController {
         // Authentication 오브젝트 사용하여 Security Context 업데이트 한다.
 		SecurityContextHolder.getContext().setAuthentication(authentication);
        
-		String jwt = jwtUtils.generateJwtToken(authentication);
-       
+		//String jwt = jwtUtils.generateJwtToken(authentication);
+        
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        	
+        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);	
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());      
-		return ResponseEntity.ok(new JwtResponsePayload(jwt,
+		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+        .body(new JwtResponsePayload(jwtCookie.toString(),
                                                  refreshToken.getToken(), 
 												 userDetails.getId(), 
 												 userDetails.getUsername(), 
@@ -124,6 +127,12 @@ public class AuthController {
         }
         
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
+    @PostMapping("/signout")
+    public ResponseEntity<?> logoutUser() {
+    ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
+        .body(new MessageResponse("You've been signed out!"));
     } 
 
     @GetMapping("/confirm")

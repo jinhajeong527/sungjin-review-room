@@ -40,6 +40,7 @@ sungjin:
      jwtSecret: sungjinReviewRoomSecretKey  
      jwtExpirationMs: 3600000 
      jwtRefreshExpirationMs: 86400000
+     jwtCookieName: sungjinJWT
      filePath: src/main/resources/images/shows/
      apiPrefix: /api
 

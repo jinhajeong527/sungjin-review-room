@@ -54,7 +54,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 //현재의 UserDetails를 SecurityContext에 세팅한다.
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 /*
-                이 이후에는 UserDetails 얻어오길 원할 때마다 SecurityContext를 아래와 같이 이용한다.
+                ** 이 이후에는 UserDetails 얻어오길 원할 때마다 SecurityContext를 아래와 같이 이용한다.
                 UserDetails userDetails =
 	                (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                 */
@@ -66,12 +66,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         
     }
     private String parseJwt(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
-        if(StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            System.out.println(headerAuth);
-            return headerAuth.substring(7, headerAuth.length());
-        }
-        return null;
+        String jwt = jwtUtils.getJwtFromCookies(request);
+        return jwt;
+        
+        // String headerAuth = request.getHeader("Authorization");
+        // if(StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+        //     System.out.println(headerAuth);
+        //     return headerAuth.substring(7, headerAuth.length());
+        // }
+        // return null;
     }
     
 }
