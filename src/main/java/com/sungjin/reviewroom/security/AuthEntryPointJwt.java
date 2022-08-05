@@ -14,11 +14,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component //Authentication 관련 예외 핸들링 : 인증받지 않은 reviewer가 secured HTTP 리소스에 request 보낼 때 마다 트리거 된다. 
 @Description("Handling Authentication Exception")
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
     private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
-    // 인증받지 않은 reviewer가 secured HTTP 리소스에 request 보낼 때 마다 트리거 된다. 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException, DisabledException {

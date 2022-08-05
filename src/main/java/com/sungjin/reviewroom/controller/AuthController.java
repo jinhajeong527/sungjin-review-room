@@ -11,7 +11,6 @@ import javax.validation.Valid;
 
 import com.sungjin.reviewroom.dao.GenreRepository;
 import com.sungjin.reviewroom.dao.RoleRepository;
-import com.sungjin.reviewroom.dto.JwtResponsePayload;
 import com.sungjin.reviewroom.dto.LoginPayload;
 import com.sungjin.reviewroom.dto.LoginResponsePayload;
 import com.sungjin.reviewroom.dto.MessageResponse;
@@ -92,35 +91,33 @@ public class AuthController {
             LoginResponsePayload payload = new LoginResponsePayload("This reviewer is not verified yet", token);
             return ResponseEntity.badRequest().body(payload);
         }
+
         // Authentication 오브젝트 사용하여 Security Context 업데이트 한다.
 		SecurityContextHolder.getContext().setAuthentication(authentication);
        
-		//String jwt = jwtUtils.generateJwtToken(authentication);
-        
+        // Principle: 현재 검증된 유저(authenticated user)를 뜻한다.
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);	
+        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+        ResponseCookie refreshTokenCookie = refreshTokenService.generateRefreshTokenCookie(userDetails);
+
 		List<String> roles = userDetails.getAuthorities().stream()
-				.map(item -> item.getAuthority())
-				.collect(Collectors.toList());
+				                        .map(item -> item.getAuthority())
+				                        .collect(Collectors.toList());
 
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());      
+        
 		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-        .body(new JwtResponsePayload(jwtCookie.toString(),
-                                                 refreshToken.getToken(), 
-												 userDetails.getId(), 
-												 userDetails.getUsername(), 
-												 userDetails.getEmail(), 
-												 roles));
-
+                                  .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                                  .body(new LoginResponsePayload(
+											userDetails.getId(), 
+											userDetails.getUsername(), 
+											userDetails.getEmail(), 
+											roles));
         
         // JWT 토큰 response header에 쿠키로 심어주기
         // Cookie jwtCookie = new Cookie("jwt", jwt);
         // jwtCookie.setHttpOnly(true);
         // jwtCookie.setMaxAge(60*60);
         // httpServletResponse.addCookie(jwtCookie);
-
-		
-                                                 
 	}
     // 리뷰어 회원가입
     @PostMapping("/signup")

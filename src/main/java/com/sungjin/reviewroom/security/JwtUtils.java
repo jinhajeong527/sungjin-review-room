@@ -28,6 +28,8 @@ public class JwtUtils {
     private int jwtExpirationMs;
     @Value("${sungjin.reviewroom.app.jwtCookieName}")
     private String jwtCookie;
+    @Value("${spring.data.rest.base-path}")
+    String appUrl; 
 
     public String getJwtFromCookies(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request, jwtCookie);
@@ -37,26 +39,28 @@ public class JwtUtils {
             return null;
         }
     }
+
     public ResponseCookie generateJwtCookie(UserDetailsImpl userDetails) {
         String jwt = generateJwtToken(userDetails.getEmail());
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path(appUrl).maxAge(jwtExpirationMs).httpOnly(true).build();
         return cookie;
-      }
-      public ResponseCookie getCleanJwtCookie() {
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
-        return cookie;
-      }
-
-    //public String generateJwtToken(Authentication authentication) {
-        public String generateJwtToken(String email) {    
-        //UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-        return Jwts.builder()
-                    .setSubject((email))
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                    .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                    .compact();
     }
+    // 로그아웃
+    public ResponseCookie getCleanJwtCookie() {
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path(appUrl).build();
+        return cookie;
+    }
+
+   
+    public String generateJwtToken(String email) {    
+        return Jwts.builder()
+                   .setSubject((email))
+                   .setIssuedAt(new Date())
+                   .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                   .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                   .compact();
+    }
+
     public String getUserEmailFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }

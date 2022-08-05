@@ -8,16 +8,20 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import com.sungjin.reviewroom.dao.RefreshTokenRepository;
 import com.sungjin.reviewroom.dao.ReviewerRepository;
 import com.sungjin.reviewroom.entity.RefreshToken;
 import com.sungjin.reviewroom.exception.TokenRefreshException;
+import com.sungjin.reviewroom.security.UserDetailsImpl;
 @Service
 public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Value("${sungjin.reviewroom.app.jwtRefreshExpirationMs}")
     private Long refreshTokenDurationMs;
+    @Value("${sungjin.reviewroom.app.refreshTokenCookieName}")
+    private String refreshTokenCookie;
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
     @Autowired
@@ -27,6 +31,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);
     }
+    @Override
+    public ResponseCookie generateRefreshTokenCookie(UserDetailsImpl userDetails) {
+        RefreshToken refreshToken = createRefreshToken(userDetails.getId());      
+        ResponseCookie cookie = ResponseCookie.from(refreshTokenCookie, refreshToken.getToken()).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
+        return cookie;
+      }
 
     @Override
     public RefreshToken createRefreshToken(int userId) {
