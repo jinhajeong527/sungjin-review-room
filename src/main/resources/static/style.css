@@ -138,3 +138,6 @@ main .contents .category .page__btn__box button{
   padding: 8px 12px;
 }
 
+main .contents .show__image {
+  cursor: pointer;
+}

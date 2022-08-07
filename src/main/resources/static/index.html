@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="review_detail/review_detail.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gugi&family=Poor+Story&display=swap" rel="stylesheet">
@@ -12,7 +13,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <title>Document</title>
 </head>
-<body>
+<body>  
         <header>
             <img class="logo" src="src/img/logo.png" alt="logo">
             <div class="main">
@@ -25,6 +26,7 @@
             </ul>
         </header>
         <main>
+            <div class="review__detail__modal"></div>
             <div class="mainImage">
                 <img src="src/img/main.jpg" alt="mainImage">
             </div>
@@ -37,10 +39,10 @@
                     </div>
                     <ul class="reviews">
                         <li class="item">
-                            <img src="src/img/items/item1.jpeg" alt="reviewItem">
+                            <img src="src/img/items/item1.jpeg" alt="reviewItem" class="show__image" onclick="showDetail(1)">
                             <span class="item__title">안녕<button class="wishlist__btn" onclick="addWishList()"><i class="fa-solid fa-cart-shopping"></i></button></span>
                             <span class="item__reviews">100,000 views</span>
-                            </li> 
+                        </li> 
                     </ul>
                 </li>
                 <li class="category">
@@ -68,4 +70,5 @@
         </footer>
 </body>
 <script type="module" src="main.js" async defer></script>
+<script type="module" src="review_detail/review_detail.js" async defer></script>
 </html>
