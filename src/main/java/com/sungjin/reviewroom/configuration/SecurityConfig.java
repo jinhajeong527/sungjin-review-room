@@ -66,8 +66,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests()
+            .antMatchers().permitAll()
+            .antMatchers("/**/login/**").permitAll()
+            .antMatchers("/**/src/img/**").permitAll()
             .antMatchers("/").permitAll()
-            .antMatchers("/**/style.css", "/**/main.js", "/**/index.html").permitAll()
+            .antMatchers("/**/env.js", "/**/auth.js","/**/style.css", "/**/main.js", "/**/index.html").permitAll()
             .antMatchers("/api/auth/**","/api/genre/**","/api/show/mostReviewed").permitAll()
             .anyRequest().authenticated(); 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
