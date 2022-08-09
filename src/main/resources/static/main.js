@@ -63,10 +63,13 @@ function nextPreferredPage() {
 
 function getMonthlyBestList() {
     let pagePayload = getPagePayload(monthlyBestPageNo);
-    axios.get(`http://${env.api_address}/api/show/mostReviewed`, pagePayload)
+    // axios.get(`http://${env.api_address}/api/show/mostReviewed`, pagePayload) => 기존 코드
+    // 정진하가 RequestBody를 고집하는 바람에 성정이가 그에맞춰 보내주었지만, param으로 보냈어야 한다는 슬픈 이야기.
+    axios.get(`http://${env.api_address}/api/show/mostReviewed`, { params: { pageNumber: pagePayload.pageNumber, pageSize: pagePayload.pageSize } })
     .then(function(response) {
         console.log(response);
-        addItemListToParent(monthlyBest, response.data.show)
+        // list 부분인 response.data.show의 수정이 필요하다. undefined 에러. 실제 response 데이터 예시는 노션에 정리했다. data에서 바로 show로 찍고 들어갈 수 없는 것이 이슈이다.
+        addItemListToParent(monthlyBest, response.data.show);
     })
     .catch(function (error) {
         console.log(error);
