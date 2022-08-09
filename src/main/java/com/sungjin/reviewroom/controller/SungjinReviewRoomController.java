@@ -8,10 +8,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/")
-public class TestController {
-
+public class SungjinReviewRoomController {
+    // 메인 페이지
     @GetMapping
-    public String hello() {
+    public String main() {
         return "index.html";
+    }
+    
+    // 로그인 페이지
+    @GetMapping("/login")
+    public String login() {
+        return "login.html";
     }
 }
