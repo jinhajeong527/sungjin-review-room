@@ -69,7 +69,6 @@ public class AuthController {
     JwtUtils jwtUtils;
     @Autowired
     RefreshTokenService refreshTokenService;
-
     @Value("${spring.data.rest.base-path}")
     String appUrl; 
 
@@ -80,16 +79,17 @@ public class AuthController {
             /* 
             UsernamePasswordAuthenticationToken : 
             An Authentication implementation that is designed for simple presentation of a username and password.
+            로그인 리퀘스트로부터 { username, password }를 얻어오며, AuthenticationManager 는 로그인 어카운트를 인증하기 위해서 사용할 것이다.
             */
             authentication = authenticationManager.authenticate(
 				             new UsernamePasswordAuthenticationToken(loginPayload.getEmail(), loginPayload.getPassword())
                              );
         } catch(DisabledException exception) {
-            // 아직 회원가입 후 이메일 인증하지 않아서 verified 되지 않은 리뷰어가 로그인 시도 했을 경우
+            // 아직 회원가입 후 이메일 인증하지 않아서 verified 되지 않은 리뷰어가 로그인 시도 했을 경우(Reviewer 엔티티의 verified가 false일 것이다.)
             String email = loginPayload.getEmail();
             String token = reviewerService.findTokenWithLoginInfo(email);
-            LoginResponsePayload payload = new LoginResponsePayload("This reviewer is not verified yet", token);
-            return ResponseEntity.badRequest().body(payload);
+            LoginResponsePayload loginResponsePayload = new LoginResponsePayload("This reviewer is not verified yet", token);
+            return ResponseEntity.badRequest().body(loginResponsePayload);
         }
 
         // Authentication 오브젝트 사용하여 Security Context 업데이트 한다.
@@ -112,12 +112,6 @@ public class AuthController {
 											userDetails.getUsername(), 
 											userDetails.getEmail(), 
 											roles));
-        
-        // JWT 토큰 response header에 쿠키로 심어주기
-        // Cookie jwtCookie = new Cookie("jwt", jwt);
-        // jwtCookie.setHttpOnly(true);
-        // jwtCookie.setMaxAge(60*60);
-        // httpServletResponse.addCookie(jwtCookie);
 	}
     // 리뷰어 회원가입
     @PostMapping("/signup")

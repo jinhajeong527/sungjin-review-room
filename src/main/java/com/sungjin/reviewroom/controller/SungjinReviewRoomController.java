@@ -18,6 +18,6 @@ public class SungjinReviewRoomController {
     // 로그인 페이지
     @GetMapping("/login")
     public String login() {
-        return "login.html";
+        return "/login/login.html";
     }
 }
