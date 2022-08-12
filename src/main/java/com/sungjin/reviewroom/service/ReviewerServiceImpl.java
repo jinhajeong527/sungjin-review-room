@@ -106,7 +106,6 @@ public class ReviewerServiceImpl implements ReviewerService {
     @Override
     @Transactional
     public void createVerificationTokenForReviewer(Reviewer reviewer, String token) {
-        System.out.println(token);
         final VerificationToken myToken = new VerificationToken(token, reviewer);
         verificationTokenRepository.save(myToken);
     }

@@ -2,6 +2,7 @@ package com.sungjin.reviewroom.controller;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.Cookie;
@@ -28,6 +29,7 @@ import com.sungjin.reviewroom.service.ReviewerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -66,11 +68,13 @@ public class AuthController {
     @Autowired
     JavaMailSender mailSender;
     @Autowired
+    private MessageSource messages;
+    @Autowired
     JwtUtils jwtUtils;
     @Autowired
     RefreshTokenService refreshTokenService;
     @Value("${spring.data.rest.base-path}")
-    String appUrl; 
+    String basePath; 
 
     @PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginPayload loginPayload, HttpServletResponse httpServletResponse) {
@@ -119,7 +123,7 @@ public class AuthController {
         try { // Reviewer 등록 시도
             Reviewer reviewerWhoJustSignedUp = reviewerService.registerUser(signupPayload);
             // 이벤트의 발행
-            eventPublisher.publishEvent(new OnSignupCompleteEvent(reviewerWhoJustSignedUp, request.getLocale(), appUrl));
+            eventPublisher.publishEvent(new OnSignupCompleteEvent(reviewerWhoJustSignedUp, request.getLocale(), basePath));
         } catch(ReviewerAlreadyExistException exception) {  // 존재하는 Reviewer일 경우
              return ResponseEntity
 			 		.badRequest()
@@ -172,15 +176,22 @@ public class AuthController {
     @GetMapping("/resendToken")
     public ResponseEntity<?> resendVerificationToken(HttpServletRequest request, @RequestParam("token") String existingToken) {
         VerificationToken newToken = reviewerService.generateVerificationTokenAgain(existingToken);
-        Reviewer reviewer = reviewerService.getReviewer(newToken.getToken());
-       
-        String confirmationUrl
-          = "/api/auth/confirm?token=" + newToken.getToken();
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(reviewer.getEmail());
-        email.setSubject("resending");
-        email.setText("\r\n" + "http://localhost:8080" + confirmationUrl);
+        Reviewer reviewerWhoRequestNewToken = reviewerService.getReviewer(newToken.getToken());
+        String appUrl = "http://" + request.getServerName() + ":" + request.getServerPort() + basePath;
+        SimpleMailMessage email = constructResendVerificationTokenEmail(appUrl, request.getLocale(), newToken, reviewerWhoRequestNewToken);
         mailSender.send(email);
-        return ResponseEntity.ok("ok");
+        return ResponseEntity.ok("Successfully resent the verification email");
+    }
+
+    private SimpleMailMessage constructResendVerificationTokenEmail(String contextPath, Locale locale, VerificationToken newToken, Reviewer reviewer) {
+        String confirmationUrl = contextPath + "/auth/confirm?token=" + newToken.getToken();
+        String message = messages.getMessage("message.resendToken", null, locale);
+        message += System.lineSeparator();
+        message += confirmationUrl;
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setSubject(reviewer.getFirstName() + messages.getMessage("message.resendTokenSubject", null, locale));
+        email.setText(message);
+        email.setTo(reviewer.getEmail());
+        return email;
     }
 }

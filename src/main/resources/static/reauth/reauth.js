@@ -2,7 +2,9 @@ import env from '../env.js';
 const mailResendBtn = document.querySelector('.auth__mail__btn');
 mailResendBtn.addEventListener('click', () => {
     let paramMap = getParamMapFromURL(window.location.href);
-    let resendToken = paramMap.get('resendToken');
+    console.log(paramMap); // ex) Map { token → "a5905de8-39a7-4d8b-9be8-5135641b6f74" }
+    //let resendToken = paramMap.get('resendToken');
+    let resendToken = paramMap.get('token');
     axios.get(`http://${env.api_address}/api/auth/resendToken?token=${resendToken}`)
     .then(function (response) {
         console.log(response);
