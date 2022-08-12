@@ -37,17 +37,18 @@ public class SignupListener implements ApplicationListener<OnSignupCompleteEvent
         String token = UUID.randomUUID().toString();
         reviewerService.createVerificationTokenForReviewer(reviewer, token);
       
-        String recipientAddress = reviewer.getEmail();
-        String subject = "Sungjin Review Room Registration Confirmation";
+        String subject = reviewer.getFirstName() + 
+            messages.getMessage("message.regSuccSubject", null, event.getLocale());
         String confirmationUrl = event.getAppUrl() + "/auth/confirm?token=" + token;
+
         String message = messages.getMessage("message.regSuccLink", null, event.getLocale());
         message += System.lineSeparator();
-        
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(recipientAddress);
-        email.setSubject(subject);
-        email.setText(message + "http://localhost:8081" + confirmationUrl);
+        message += confirmationUrl;
 
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setSubject(subject);
+        email.setText(message);
+        email.setTo(reviewer.getEmail());
         mailSender.send(email);
     }
 }

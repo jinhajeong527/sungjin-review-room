@@ -20,4 +20,10 @@ public class SungjinReviewRoomController {
     public String login() {
         return "/login/login.html";
     }
+
+    // 회원가입 페이지
+    @GetMapping("/signup")
+    public String signup() {
+        return "/signup/signup.html";
+    }
 }

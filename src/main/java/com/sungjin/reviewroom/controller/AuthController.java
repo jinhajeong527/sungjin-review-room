@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -16,7 +15,6 @@ import com.sungjin.reviewroom.dto.LoginPayload;
 import com.sungjin.reviewroom.dto.LoginResponsePayload;
 import com.sungjin.reviewroom.dto.MessageResponse;
 import com.sungjin.reviewroom.dto.SignupPayload;
-import com.sungjin.reviewroom.entity.RefreshToken;
 import com.sungjin.reviewroom.entity.Reviewer;
 import com.sungjin.reviewroom.entity.VerificationToken;
 import com.sungjin.reviewroom.event.OnSignupCompleteEvent;
@@ -123,7 +121,8 @@ public class AuthController {
         try { // Reviewer 등록 시도
             Reviewer reviewerWhoJustSignedUp = reviewerService.registerUser(signupPayload);
             // 이벤트의 발행
-            eventPublisher.publishEvent(new OnSignupCompleteEvent(reviewerWhoJustSignedUp, request.getLocale(), basePath));
+            String appUrl = "http://" + request.getServerName() + ":" + request.getServerPort() + basePath;
+            eventPublisher.publishEvent(new OnSignupCompleteEvent(reviewerWhoJustSignedUp, request.getLocale(), appUrl));
         } catch(ReviewerAlreadyExistException exception) {  // 존재하는 Reviewer일 경우
              return ResponseEntity
 			 		.badRequest()
