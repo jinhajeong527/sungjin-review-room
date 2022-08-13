@@ -2,9 +2,9 @@ import env from './env.js';
 import { getJWTFromCookie } from './auth.js';
 
 const doorIcon = document.querySelector('header .main .enterBtn i');
-const preferred = document.querySelector('main .contents .category #preferred .reviews');
-const monthlyBest = document.querySelector('main .contents .category #monthlyBest .reviews');
-const wishList = document.querySelector('main .contents .category #wishList .reviews');
+const preferred = document.querySelector('main .contents #preferred .reviews');
+const monthlyBest = document.querySelector('main .contents #monthlyBest .reviews');
+const wishList = document.querySelector('main .contents #wishList .reviews');
 
 const preferredPrev = document.querySelector('main .contents .category #preferred .page__btn__box .prev__page__btn');
 const preferredNext = document.querySelector('main .contents .category #preferred .page__btn__box .next__page__btn');
@@ -33,7 +33,7 @@ function getPageParam(pageNum) {
 function getPreferredList() {
     axios.get(`http://${env.api_address}/api/show/preferred`, { params: getPageParam(preferredPageNo) })
     .then(function(response) {
-        console.log(`preferred ${response.data}`)
+        console.log(response.data)
         addItemListToParent(preferred, response.data)
     })
     .catch(function (error) {
@@ -62,7 +62,7 @@ function nextPreferredPage() {
 function getMonthlyBestList() {
     axios.get(`http://${env.api_address}/api/show/mostReviewed`, { params: getPageParam(monthlyBestPageNo) })
     .then(function(response) {
-        console.log(`monthly best: ${response.data}`)
+        console.log(response.data)
         // list 부분인 response.data.show의 수정이 필요하다. undefined 에러. 실제 response 데이터 예시는 노션에 정리했다. data에서 바로 show로 찍고 들어갈 수 없는 것이 이슈이다.
         addItemListToParent(monthlyBest, response.data);
     })
@@ -93,7 +93,7 @@ function nextMonthlyPage() {
 function getWistList() {
     axios.get(`http://${env.api_address}/api/show/wishlist`, { params: getPageParam(wishListPageNo) })
     .then(function(response) {
-        console.log(`wishlist : ${response.data}`)
+        console.log(response.data)
         addItemListToParent(wishList, response.data)
     })
     .catch(function (error) {
@@ -147,6 +147,7 @@ function getNoReviewHTML() {
 }
 
 function addItemListToParent(parent, list) {
+    let reviewItem= '';
     if (list.length == 0) {
         parent.appendChild(getNoReviewHTML())
         let pageBtn;
@@ -164,9 +165,9 @@ function addItemListToParent(parent, list) {
         pageBtn.style.display = none;
     } else {
     list.forEach(element => {
-        let reviewItem = getReviewPreviewHTML(element)
-        parent.appendChild(reviewItem)
+        reviewItem = reviewItem + getReviewPreviewHTML(element)
     })
+    parent.innerHTML = reviewItem
     }
 }
 
