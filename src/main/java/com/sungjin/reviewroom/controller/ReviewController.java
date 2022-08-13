@@ -1,8 +1,9 @@
 package com.sungjin.reviewroom.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,7 @@ import com.sungjin.reviewroom.security.UserDetailsImpl;
 
 
 import com.sungjin.reviewroom.dto.AddReviewPayload;
+import com.sungjin.reviewroom.dto.MessageResponse;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -25,10 +27,14 @@ public class ReviewController {
 
     @PostMapping
     @PreAuthorize("hasRole('REVIEWER')")
-    public int addReview(@RequestBody AddReviewPayload addReviewPayload, Authentication authentication) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+    public ResponseEntity<?> addReview(@RequestBody AddReviewPayload addReviewPayload) {
+
+        UserDetailsImpl userDetails =
+	                (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userEmail = userDetails.getEmail();
         reviewService.addNewReview(addReviewPayload, userEmail);
-        return 0;
+        return ResponseEntity
+                .ok()
+                .body(new MessageResponse("Review you just wrote registered successfully!"));
     }
 }

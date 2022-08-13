@@ -51,7 +51,6 @@ import org.springframework.web.context.request.WebRequest;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(path = "${spring.data.rest.base-path}/auth")
-//@RequestMapping(path = "auth")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -137,15 +136,15 @@ public class AuthController {
     }
     @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
-    ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
-        .body(new MessageResponse("You've been signed out!"));
+        ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
+
+        return ResponseEntity.ok()
+                             .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                             .body(new MessageResponse("You've been signed out!"));
     } 
 
     @GetMapping("/confirm")
     public ResponseEntity<?> confirmSignup(WebRequest request, @RequestParam("token") String token) {
-
-        // Locale locale = request.getLocale();
         // 생성된 인증토큰 얻어오기
         VerificationToken verificationToken = reviewerService.getVerificationToken(token);
 
@@ -184,9 +183,11 @@ public class AuthController {
 
     private SimpleMailMessage constructResendVerificationTokenEmail(String contextPath, Locale locale, VerificationToken newToken, Reviewer reviewer) {
         String confirmationUrl = contextPath + "/auth/confirm?token=" + newToken.getToken();
+        
         String message = messages.getMessage("message.resendToken", null, locale);
         message += System.lineSeparator();
         message += confirmationUrl;
+        
         SimpleMailMessage email = new SimpleMailMessage();
         email.setSubject(reviewer.getFirstName() + messages.getMessage("message.resendTokenSubject", null, locale));
         email.setText(message);
