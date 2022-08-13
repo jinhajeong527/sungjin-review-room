@@ -19,7 +19,7 @@ import com.sungjin.reviewroom.service.ReviewerService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/reviewer")
+@RequestMapping(path = "${spring.data.rest.base-path}/reviewer")
 public class ReviewerController {
 
     @Autowired
