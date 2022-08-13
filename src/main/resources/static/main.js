@@ -34,7 +34,7 @@ function getPreferredList() {
     axios.get(`http://${env.api_address}/api/show/preferred`, { params: getPageParam(preferredPageNo) })
     .then(function(response) {
         console.log(response);
-        addItemListToParent(preferred, response.data.show)
+        addItemListToParent(preferred, response.data)
     })
     .catch(function (error) {
         console.log(error);
@@ -64,7 +64,7 @@ function getMonthlyBestList() {
     .then(function(response) {
         console.log(response);
         // list 부분인 response.data.show의 수정이 필요하다. undefined 에러. 실제 response 데이터 예시는 노션에 정리했다. data에서 바로 show로 찍고 들어갈 수 없는 것이 이슈이다.
-        addItemListToParent(monthlyBest, response.data.show);
+        addItemListToParent(monthlyBest, response.data);
     })
     .catch(function (error) {
         console.log(error);
@@ -94,7 +94,7 @@ function getWistList() {
     axios.get(`http://${env.api_address}/api/show/wishlist`, { params: getPageParam(wishListPageNo) })
     .then(function(response) {
         console.log(response);
-        addItemListToParent(wishList, response.data.show)
+        addItemListToParent(wishList, response.data)
     })
     .catch(function (error) {
         console.log(error);
