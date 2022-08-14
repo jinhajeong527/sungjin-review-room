@@ -1,5 +1,6 @@
 package com.sungjin.reviewroom.entity;
 
+import java.sql.Date;
 import java.time.Instant;
 
 import javax.persistence.Column;
@@ -27,9 +28,9 @@ public class RefreshToken {
     @JoinColumn(nullable = false, name = "reviewer_id")
     private Reviewer reviewer;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "token", nullable = false, unique = true)
     private String token;
 
-    @Column(nullable = false)
+    @Column(name = "expiry_date", nullable = false)
     private Instant expiryDate;
 }

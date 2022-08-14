@@ -42,7 +42,7 @@ sungjin:
      jwtRefreshExpirationMs: 86400000
      jwtCookieName: sungjinJWT
      refreshTokenCookieName: sungjinRefreshToken
-     filePath: src/main/resources/images/shows/
+     filePath: src/img/items/
      apiPrefix: /api
 
 server:
