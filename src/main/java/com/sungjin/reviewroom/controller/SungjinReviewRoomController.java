@@ -18,12 +18,12 @@ public class SungjinReviewRoomController {
     // 로그인 페이지
     @GetMapping("/login")
     public String login() {
-        return "/login/login.html";
+        return "login/login.html";
     }
 
     // 회원가입 페이지
     @GetMapping("/signup")
     public String signup() {
-        return "/signup/signup.html";
+        return "signup/signup.html";
     }
 }

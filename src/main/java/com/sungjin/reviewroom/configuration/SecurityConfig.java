@@ -52,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
+   
     /*
       스프링에 CORS 및 CSRF 설정 어떻게 할 것인지 말하는 역할
     - 모든 유저가 authenticated 되기를 원하거나, 
@@ -66,14 +66,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests()
-            .antMatchers("/**/login/**").permitAll()
-            .antMatchers("/**/signup/**").permitAll()
-            .antMatchers("/**/reauth/**").permitAll()
-            .antMatchers("/**/src/img/**").permitAll()
-            .antMatchers("/").permitAll()
-            .antMatchers("/**/env.js", "/**/auth.js","/**/style.css", "/**/main.js", "/**/index.html").permitAll()
-            .antMatchers("/api/auth/**","/api/genre/**","/api/show/mostReviewed").permitAll()
-            .anyRequest().authenticated(); 
+            .antMatchers("/api/review/**", "/api/reviewer/**", "/api/show/preferred", "/api/show/wishlist")
+            .authenticated(); //only for authenticated users
+
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
     

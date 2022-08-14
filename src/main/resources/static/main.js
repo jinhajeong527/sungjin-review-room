@@ -15,9 +15,9 @@ const wishListNext = document.querySelector('main .contents .category #wishList 
 
 const showDetailModal = document.querySelector('.review__detail__modal')
 
-let preferredPageNo = 1;
-let monthlyBestPageNo = 1;
-let wishListPageNo = 1;
+let preferredPageNo = 0;
+let monthlyBestPageNo = 0;
+let wishListPageNo = 0;
 let defaultPageSize = 3;
 let endPageNo = 5;
 
@@ -121,10 +121,10 @@ function nextWishListPage() {
 }
 
 function setMainList() {
-    if (getJWTFromCookie()!="") {
+    //if (getJWTFromCookie()!="") {
         getPreferredList();
         getWistList();
-    }
+    //}
     getMonthlyBestList();
 }
 

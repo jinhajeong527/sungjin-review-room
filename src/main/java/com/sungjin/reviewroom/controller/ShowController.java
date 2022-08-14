@@ -10,7 +10,6 @@ import com.sungjin.reviewroom.service.ShowService;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,12 +26,11 @@ public class ShowController {
     ShowService showService;
     
     @GetMapping("/preferred")
-    @PreAuthorize("hasRole('REVIEWER')")
     public List<Show> getLatestPrefrredShows(@RequestParam int pageNumber, @RequestParam int pageSize, Authentication authentication) {
         PaginationPayload paginationPayload = new PaginationPayload(pageNumber, pageSize);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<Show> show = showService.getLatestPrefrredShows(userDetails.getEmail(), paginationPayload);
-        return show;
+        List<Show> shows = showService.getLatestPrefrredShows(userDetails.getEmail(), paginationPayload);
+        return shows;
     }
 
     @GetMapping("/mostReviewed")
@@ -43,7 +41,6 @@ public class ShowController {
     }
 
     @GetMapping("/wishlist")
-    @PreAuthorize("hasRole('REVIEWER')")
     public List<Wishlist> getShowsAddedToWishlist(@RequestParam int pageNumber, @RequestParam int pageSize, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         PaginationPayload paginationPayload = new PaginationPayload(pageNumber, pageSize);
