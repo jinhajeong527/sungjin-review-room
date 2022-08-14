@@ -17,13 +17,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.util.List;
+import java.util.Arrays;
+
 
 @Description("Performs Request Filtering")
 public class AuthTokenFilter extends OncePerRequestFilter {
     /*  JwtUtils 목적 및 용도
-     1. username, date, expiration, secret을 통해 JWT 생성한다.
-     2. JWT에서 email을 얻어온다.
-     3. JWT 검증한다.
+     *  1. username, date, expiration, secret을 통해 JWT 생성한다.
+     *  2. JWT에서 email을 얻어온다.
+     *  3. JWT 검증한다.
     */
     @Autowired
     private JwtUtils jwtUtils;
@@ -32,20 +35,24 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private UserDetailsServiceImpl userDetailsService;
     
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
-
+    
+    private static final List<String> EXCLUDE_URL =
+            Arrays.asList(
+          "/","/api/genre","/api/show/mostReviewed","/login","/signup","/api/auth","/css/", 
+                "/js/",".css",".js", ".ico", ".png",".jpeg",".jpg"
+            );
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        
+        
         try {
-            
             String jwt = parseJwt(request);
-           
+            
             // 해당 request가 JWT를 갖고 있으면, validate하고, email 파싱한다.
             if(jwt != null && jwtUtils.validateJwtToken(jwt)) {
-               
-                String email = jwtUtils.getUserEmailFromJwtToken(jwt);
-             
+                String email = jwtUtils.getReviewerEmailFromJwtToken(jwt);
                 // email 정보를 통해서 UserDetails 얻어와 Authentication 오브젝트 생성한다.
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
                 UsernamePasswordAuthenticationToken authentication = 
@@ -59,12 +66,23 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 	                (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                 */
             }
-        } catch(Exception e) {
+        }
+        catch(Exception e) {
             logger.error("Cannot set reviewer authentiation: {}", e);
         }
         filterChain.doFilter(request, response);
         
     }
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+       for(String url : EXCLUDE_URL) {
+            if(request.getRequestURL().toString().contains(url)) {
+                return true;
+            }   
+       }
+       return false;
+    }
+
     private String parseJwt(HttpServletRequest request) {
         String jwt = jwtUtils.getJwtFromCookies(request);
         return jwt;
@@ -76,5 +94,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             return null;
         */
     }
+   
+   
     
 }

@@ -7,10 +7,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
+
+import com.sungjin.reviewroom.dao.RefreshTokenRepository;
+import com.sungjin.reviewroom.dao.ReviewerRepository;
+
+import com.sungjin.reviewroom.service.RefreshTokenService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -29,29 +36,55 @@ public class JwtUtils {
     @Value("${sungjin.reviewroom.app.jwtCookieName}")
     private String jwtCookie;
     @Value("${spring.data.rest.base-path}")
-    String appUrl; 
+    String basePath; 
+    @Autowired
+    RefreshTokenService refreshTokenService;
+    @Autowired
+    RefreshTokenRepository refreshTokenRepository;
+    @Autowired
+    ReviewerRepository reviewerRepository;
 
     public String getJwtFromCookies(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request, jwtCookie);
+        
         if (cookie != null) {
             return cookie.getValue();
         } else {
             return null;
         }
     }
-
+    // @Param : UserDetailsImpl userDetails
     public ResponseCookie generateJwtCookie(UserDetailsImpl userDetails) {
         String jwt = generateJwtToken(userDetails.getEmail());
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path(appUrl).maxAge(jwtExpirationMs).httpOnly(true).build();
+        ResponseCookie cookie = ResponseCookie
+                                    .from(jwtCookie, jwt)
+                                    .path(basePath)
+                                    .maxAge(jwtExpirationMs)
+                                    .httpOnly(true)
+                                    .build();
         return cookie;
     }
-    // 로그아웃
-    public ResponseCookie getCleanJwtCookie() {
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path(appUrl).build();
+    // @Param : String email
+    public ResponseCookie generateJwtCookie(String email) {
+        String jwt = generateJwtToken(email);
+        ResponseCookie cookie = ResponseCookie
+                                    .from(jwtCookie, jwt)
+                                    .path(basePath)
+                                    .maxAge(jwtExpirationMs)
+                                    .httpOnly(true)
+                                    .build();
         return cookie;
     }
 
-   
+    // 로그아웃 : jwt 토큰 값을 null로 바꿔준다.
+    public ResponseCookie getCleanJwtCookie() {
+        ResponseCookie cookie = ResponseCookie
+                                    .from(jwtCookie, null)
+                                    .path(basePath)
+                                    .build();
+        return cookie;
+    }
+    // jwt 생성
     public String generateJwtToken(String email) {    
         return Jwts.builder()
                    .setSubject((email))
@@ -60,13 +93,14 @@ public class JwtUtils {
                    .signWith(SignatureAlgorithm.HS512, jwtSecret)
                    .compact();
     }
-
-    public String getUserEmailFromJwtToken(String token) {
+    // jwt 토큰 정보에서 리뷰어 이메일 정보 얻어오기
+    public String getReviewerEmailFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
-    public boolean validateJwtToken(String authToken) {
+
+    public boolean validateJwtToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
         } catch (SignatureException e) {
 			logger.error("Invalid JWT signature: {}", e.getMessage());
@@ -81,5 +115,4 @@ public class JwtUtils {
 		}
 		return false;
     }
-    
 }
