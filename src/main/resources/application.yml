@@ -16,7 +16,7 @@ spring:
     user:
       password: test123 #임시 로그인 비밀번호. 아이디는 user
     filter:
-      order: 10 #For Custom Filter
+      order: 10 # For Custom Filter
  mail:
     host: smtp.gmail.com
     port: 465
@@ -38,7 +38,7 @@ sungjin:
   reviewroom:
     app:
      jwtSecret: sungjinReviewRoomSecretKey  
-     jwtExpirationMs: 3600000 
+     jwtExpirationMs: 600000 #10분
      jwtRefreshExpirationMs: 86400000
      jwtCookieName: sungjinJWT
      refreshTokenCookieName: sungjinRefreshToken

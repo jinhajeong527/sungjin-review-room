@@ -26,4 +26,16 @@ public class SungjinReviewRoomController {
     public String signup() {
         return "signup/signup.html";
     }
+
+    // 재인증 요청 페이지
+    @GetMapping("/reauth")
+    public String reauth() {
+        return "reauth/reauth.html";
+    }
+
+    // 리뷰 등록 페이지
+    @GetMapping("/reviewRegister")
+    public String reviweRegister() {
+        return "review_register/review_register.html";
+    }
 }

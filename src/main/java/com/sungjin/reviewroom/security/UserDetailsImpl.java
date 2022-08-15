@@ -88,9 +88,9 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean equals(Object obj) {
         if(this == obj)
-         return true;
+            return true;
         if (obj == null || getClass() != obj.getClass())
-         return false;
+            return false;
         UserDetailsImpl reviewer = (UserDetailsImpl) obj;
         return Objects.equals(id, reviewer.id);
     }

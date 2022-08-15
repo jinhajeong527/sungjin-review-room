@@ -10,15 +10,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-
-    ReviewerRepository reviewerRepository;
     
     @Autowired
-    public UserDetailsServiceImpl(ReviewerRepository reviewerRepository) {
-        this.reviewerRepository = reviewerRepository;
-    }
+    ReviewerRepository reviewerRepository;
 
     @Override
     @Transactional

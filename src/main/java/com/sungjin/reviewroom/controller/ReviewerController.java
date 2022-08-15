@@ -36,8 +36,10 @@ public class ReviewerController {
         } catch(ShowNotPresentException exception) {
             return ResponseEntity.badRequest().body(new MessageResponse("This show cannot be added to wishlist cause it is never been reviewed before on our service"));
         }
-        if(result == 1) return ResponseEntity.ok(new MessageResponse("Wishlist added successfully!"));
-        else return ResponseEntity.badRequest().body(new MessageResponse("Your attempt to add to wishlist has failed"));
+        if(result == 1) 
+            return ResponseEntity.ok(new MessageResponse("Wishlist added successfully!"));
+        else 
+            return ResponseEntity.badRequest().body(new MessageResponse("Your attempt to add to wishlist has failed"));
     }
     @DeleteMapping("/wishlist")
     public ResponseEntity<MessageResponse> deleteWishList(@RequestBody WishListPayLoad wishListPayLoad, Authentication authentication) {

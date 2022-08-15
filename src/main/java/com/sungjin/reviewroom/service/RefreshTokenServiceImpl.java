@@ -4,12 +4,15 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.WebUtils;
 
 import com.sungjin.reviewroom.dao.RefreshTokenRepository;
 import com.sungjin.reviewroom.dao.ReviewerRepository;
@@ -28,15 +31,28 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private ReviewerRepository reviewerRepository;
 
     @Override
+    public String getRefreshTokenFromCookies(HttpServletRequest request) {
+        Cookie cookie = WebUtils.getCookie(request, refreshTokenCookie);
+        if (cookie != null) {
+            return cookie.getValue();
+        } else {
+            return null;
+        }
+    }
+    @Override
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);
     }
     @Override
     public ResponseCookie generateRefreshTokenCookie(UserDetailsImpl userDetails) {
         RefreshToken refreshToken = createRefreshToken(userDetails.getId());      
-        ResponseCookie cookie = ResponseCookie.from(refreshTokenCookie, refreshToken.getToken()).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
+        ResponseCookie cookie = ResponseCookie
+                                .from(refreshTokenCookie, refreshToken.getToken())
+                                .maxAge(refreshTokenDurationMs)
+                                .httpOnly(true)
+                                .build();
         return cookie;
-      }
+    }
 
     @Override
     public RefreshToken createRefreshToken(int userId) {

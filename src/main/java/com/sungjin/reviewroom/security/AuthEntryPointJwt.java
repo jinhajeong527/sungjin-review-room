@@ -22,7 +22,7 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException, DisabledException {
         logger.error("Unauthorized error: {}", authException.getMessage());
-        //HttpServletResponse.SC_UNAUTHORIZED는 401 에러이다. 해당 리퀘스트가 HTTP Authentication 요구함을 나타낸다. 
+        // HttpServletResponse.SC_UNAUTHORIZED는 401 에러이다. 해당 리퀘스트가 HTTP Authentication 요구함을 나타낸다. 
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
     }
     

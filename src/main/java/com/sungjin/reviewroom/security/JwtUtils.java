@@ -35,8 +35,6 @@ public class JwtUtils {
     private int jwtExpirationMs;
     @Value("${sungjin.reviewroom.app.jwtCookieName}")
     private String jwtCookie;
-    @Value("${spring.data.rest.base-path}")
-    String basePath; 
     @Autowired
     RefreshTokenService refreshTokenService;
     @Autowired
@@ -46,30 +44,27 @@ public class JwtUtils {
 
     public String getJwtFromCookies(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request, jwtCookie);
-        
         if (cookie != null) {
             return cookie.getValue();
         } else {
             return null;
         }
     }
-    // @Param : UserDetailsImpl userDetails
+    // generateJwtCookie @Param : UserDetailsImpl userDetails
     public ResponseCookie generateJwtCookie(UserDetailsImpl userDetails) {
         String jwt = generateJwtToken(userDetails.getEmail());
         ResponseCookie cookie = ResponseCookie
                                     .from(jwtCookie, jwt)
-                                    .path(basePath)
                                     .maxAge(jwtExpirationMs)
                                     .httpOnly(true)
                                     .build();
         return cookie;
     }
-    // @Param : String email
+    // generateJwtCookie @Param : String email
     public ResponseCookie generateJwtCookie(String email) {
         String jwt = generateJwtToken(email);
         ResponseCookie cookie = ResponseCookie
                                     .from(jwtCookie, jwt)
-                                    .path(basePath)
                                     .maxAge(jwtExpirationMs)
                                     .httpOnly(true)
                                     .build();
@@ -80,14 +75,13 @@ public class JwtUtils {
     public ResponseCookie getCleanJwtCookie() {
         ResponseCookie cookie = ResponseCookie
                                     .from(jwtCookie, null)
-                                    .path(basePath)
                                     .build();
         return cookie;
     }
     // jwt 생성
     public String generateJwtToken(String email) {    
         return Jwts.builder()
-                   .setSubject((email))
+                   .setSubject(email)
                    .setIssuedAt(new Date())
                    .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                    .signWith(SignatureAlgorithm.HS512, jwtSecret)
@@ -108,6 +102,7 @@ public class JwtUtils {
 			logger.error("Invalid JWT token: {}", e.getMessage());
 		} catch (ExpiredJwtException e) {
 			logger.error("JWT token is expired: {}", e.getMessage());
+            throw new ExpiredJwtException(e.getHeader(), e.getClaims(), e.getMessage());
 		} catch (UnsupportedJwtException e) {
 			logger.error("JWT token is unsupported: {}", e.getMessage());
 		} catch (IllegalArgumentException e) {
