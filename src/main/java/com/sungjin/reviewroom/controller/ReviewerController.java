@@ -26,7 +26,7 @@ public class ReviewerController {
     ReviewerService reviewerService;
     
     @PostMapping("/wishlist")
-    public ResponseEntity<?> addToWishList(@RequestBody WishListPayLoad wishListPayLoad, Authentication authentication) {
+    public ResponseEntity<MessageResponse> addToWishList(@RequestBody WishListPayLoad wishListPayLoad, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         int result;
         try {
@@ -40,11 +40,14 @@ public class ReviewerController {
         else return ResponseEntity.badRequest().body(new MessageResponse("Your attempt to add to wishlist has failed"));
     }
     @DeleteMapping("/wishlist")
-    public ResponseEntity<?> deleteWishList(@RequestBody WishListPayLoad wishListPayLoad, Authentication authentication) {
+    public ResponseEntity<MessageResponse> deleteWishList(@RequestBody WishListPayLoad wishListPayLoad, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         int result;
         result = reviewerService.deleteWishlist(wishListPayLoad.getShowId(), userDetails.getEmail());
-        return ResponseEntity.ok().body(new MessageResponse("The show added to your wishlist has been deleted"));
+        if(result == 1) 
+            return ResponseEntity.ok().body(new MessageResponse("The show added to your wishlist has been deleted"));
+        else 
+            return ResponseEntity.badRequest().body(new MessageResponse("Your attempt to delete the wishlist has failed"));
     }
 
 
