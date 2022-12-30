@@ -351,3 +351,15 @@ MigrationBackup/
 *.class
 target/classes/static/**
 target/classes/**
+target/classes/static/env.js
+target/classes/static/main.js
+target/classes/static/login/login.js
+target/classes/static/reauth/reauth.js
+target/classes/static/review_register/review_register.html
+target/classes/static/signup/signup.html
+target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
+target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+target/surefire-reports/com.sungjin.reviewroom.SungjinReviewRoomApplicationTests.txt
+target/surefire-reports/TEST-com.sungjin.reviewroom.SungjinReviewRoomApplicationTests.xml
