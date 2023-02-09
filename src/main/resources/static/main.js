@@ -62,8 +62,18 @@ function nextPreferredPage() {
 function getMonthlyBestList() {
     axios.get(`http://${env.api_address}/api/show/mostReviewed`, { params: getPageParam(monthlyBestPageNo) })
     .then(function(response) {
-        console.log(response.data)
         // list 부분인 response.data.show의 수정이 필요하다. undefined 에러. 실제 response 데이터 예시는 노션에 정리했다. data에서 바로 show로 찍고 들어갈 수 없는 것이 이슈이다.
+        addItemListToParent(monthlyBest, response.data);
+    })
+    .catch(function (error) {
+        console.log(error);
+    })
+}
+
+function getAllShowList() {
+    axios.post(`http://${env.api_address}/api/show/all`, getPageParam(monthlyBestPageNo))
+    .then(function(response) {
+        console.log({response});
         addItemListToParent(monthlyBest, response.data);
     })
     .catch(function (error) {
@@ -121,18 +131,20 @@ function nextWishListPage() {
 }
 
 function setMainList() {
-    //if (getJWTFromCookie()!="") {
-        getPreferredList();
-        getWistList();
-    //}
-    getMonthlyBestList();
+    // if (getJWTFromCookie()!="") {
+    //     getPreferredList();
+    //     getWistList();
+    // }
+    // getMonthlyBestList();
+    getAllShowList();
 }
 
 function getReviewPreviewHTML(element) {
+    console.log({element});
     return `
     <li class="item">
-    <img src="${element.show.img}" alt="reviewItem" class="show__image" onclick="showDetail(${element.show.id})">
-    <span class="item__title">${element.show.name} <button class="wishlist__btn" onclick="addWishList(${element.show.id})"><i class="fa-solid fa-cart-shopping"></i></button></span>
+    <img src="${element.image}" alt="reviewItem" class="show__image" onclick="showDetail(${element.id})">
+    <span class="item__title">${element.name} <button class="wishlist__btn" onclick="addWishList(${element.id})"><i class="fa-solid fa-cart-shopping"></i></button></span>
     <span class="item__reviews">${element.reviewsCount} views</span>
     </li> 
     `

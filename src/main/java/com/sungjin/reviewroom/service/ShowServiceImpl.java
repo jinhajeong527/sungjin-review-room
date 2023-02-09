@@ -50,6 +50,11 @@ public class ShowServiceImpl implements ShowService {
 
 
     @Override
+    public List<Show> getAllShows() {
+        return showRepository.findAll();
+    }
+
+    @Override
     @Transactional
     public List<Show> getLatestPrefrredShows(String email, PaginationPayload paginationPayload) {
         // 이메일 정보로 리뷰어 정보 얻어오기
